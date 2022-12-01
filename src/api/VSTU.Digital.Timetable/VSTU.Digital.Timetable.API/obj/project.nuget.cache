@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "ZvTcN6LY3Qwo38TbjlxG9wkGLV5Q/o6LzHcznTmMHnV3kSgLh2N1ZwqfEZ985ffPOH97YeepAVJewZKQ5eHXFw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Vladimir\\Documents\\projs\\VSTU_Digital\\src\\api\\VSTU.Digital.Timetable\\VSTU.Digital.Timetable.API\\VSTU.Digital.Timetable.API.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Vladimir\\.nuget\\packages\\microsoft.aspnetcore.openapi\\7.0.0\\microsoft.aspnetcore.openapi.7.0.0.nupkg.sha512",
+    "C:\\Users\\Vladimir\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "C:\\Users\\Vladimir\\.nuget\\packages\\microsoft.openapi\\1.4.3\\microsoft.openapi.1.4.3.nupkg.sha512",
+    "C:\\Users\\Vladimir\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
+    "C:\\Users\\Vladimir\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.4.0\\swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
+    "C:\\Users\\Vladimir\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.4.0\\swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",
+    "C:\\Users\\Vladimir\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.4.0\\swashbuckle.aspnetcore.swaggerui.6.4.0.nupkg.sha512"
+  ],
+  "logs": []
+}
