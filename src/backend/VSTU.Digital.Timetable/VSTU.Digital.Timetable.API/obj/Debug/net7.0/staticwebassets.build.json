@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "39iWwJNuT8yiRNlXTUdWguB6QMxHtMk3iUWuGHT65VY=",
+  "Source": "VSTU.Digital.Timetable.API",
+  "BasePath": "_content/VSTU.Digital.Timetable.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

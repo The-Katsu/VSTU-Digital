@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "UYiMbK7mNjy+MSiJGocuyedQ7bad5nzlYC9pT26pFWwU9DeUnWGbbzIkGh97HhmI1AO91qLTs27lAtO0pKaJlg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Vladimir\\Documents\\projs\\VSTU_Digital\\src\\api\\VSTU.Digital.Timetable\\VSTU.Digital.Timetable.Application\\VSTU.Digital.Timetable.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Vladimir\\.nuget\\packages\\htmlagilitypack\\1.11.46\\htmlagilitypack.1.11.46.nupkg.sha512"
+  ],
+  "logs": []
+}

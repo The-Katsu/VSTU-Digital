@@ -1,0 +1,12 @@
+C:\Users\Vladimir\Documents\projs\VSTU_Digital\src\api\VSTU.Digital.Timetable\VSTU.Digital.Timetable.Application\bin\Debug\net7.0\VSTU.Digital.Timetable.Application.deps.json
+C:\Users\Vladimir\Documents\projs\VSTU_Digital\src\api\VSTU.Digital.Timetable\VSTU.Digital.Timetable.Application\bin\Debug\net7.0\VSTU.Digital.Timetable.Application.dll
+C:\Users\Vladimir\Documents\projs\VSTU_Digital\src\api\VSTU.Digital.Timetable\VSTU.Digital.Timetable.Application\bin\Debug\net7.0\VSTU.Digital.Timetable.Application.pdb
+C:\Users\Vladimir\Documents\projs\VSTU_Digital\src\api\VSTU.Digital.Timetable\VSTU.Digital.Timetable.Application\obj\Debug\net7.0\VSTU.Digital.Timetable.Application.csproj.AssemblyReference.cache
+C:\Users\Vladimir\Documents\projs\VSTU_Digital\src\api\VSTU.Digital.Timetable\VSTU.Digital.Timetable.Application\obj\Debug\net7.0\VSTU.Digital.Timetable.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Vladimir\Documents\projs\VSTU_Digital\src\api\VSTU.Digital.Timetable\VSTU.Digital.Timetable.Application\obj\Debug\net7.0\VSTU.Digital.Timetable.Application.AssemblyInfoInputs.cache
+C:\Users\Vladimir\Documents\projs\VSTU_Digital\src\api\VSTU.Digital.Timetable\VSTU.Digital.Timetable.Application\obj\Debug\net7.0\VSTU.Digital.Timetable.Application.AssemblyInfo.cs
+C:\Users\Vladimir\Documents\projs\VSTU_Digital\src\api\VSTU.Digital.Timetable\VSTU.Digital.Timetable.Application\obj\Debug\net7.0\VSTU.Digital.Timetable.Application.csproj.CoreCompileInputs.cache
+C:\Users\Vladimir\Documents\projs\VSTU_Digital\src\api\VSTU.Digital.Timetable\VSTU.Digital.Timetable.Application\obj\Debug\net7.0\VSTU.Digital.Timetable.Application.dll
+C:\Users\Vladimir\Documents\projs\VSTU_Digital\src\api\VSTU.Digital.Timetable\VSTU.Digital.Timetable.Application\obj\Debug\net7.0\refint\VSTU.Digital.Timetable.Application.dll
+C:\Users\Vladimir\Documents\projs\VSTU_Digital\src\api\VSTU.Digital.Timetable\VSTU.Digital.Timetable.Application\obj\Debug\net7.0\VSTU.Digital.Timetable.Application.pdb
+C:\Users\Vladimir\Documents\projs\VSTU_Digital\src\api\VSTU.Digital.Timetable\VSTU.Digital.Timetable.Application\obj\Debug\net7.0\ref\VSTU.Digital.Timetable.Application.dll
