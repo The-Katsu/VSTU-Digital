@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\VSTU.Digital.Timetable.API.props" />
-</Project>
