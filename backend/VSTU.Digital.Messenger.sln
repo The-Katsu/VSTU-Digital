@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{17486FCD-4BD5-4BF3-8731-2047F93620F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSTU.Digital.Messenger.Presentation", "src\VSTU.Digital.Messenger.Presentation\VSTU.Digital.Messenger.Presentation.csproj", "{C413C747-BCB8-4FBA-847B-ACDF2E18477F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSTU.Digital.Messenger.Domain", "src\VSTU.Digital.Messenger.Domain\VSTU.Digital.Messenger.Domain.csproj", "{1B315414-3295-4976-8798-04041121C5BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSTU.Digital.Messenger.Application", "src\VSTU.Digital.Messenger.Application\VSTU.Digital.Messenger.Application.csproj", "{25E60EEB-434C-499E-BE67-DF9FACE7DCF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSTU.Digital.Messenger.Infrastructure", "src\VSTU.Digital.Messenger.Infrastructure\VSTU.Digital.Messenger.Infrastructure.csproj", "{A130F3C4-F1AF-4E43-9929-BC1B7BC62D21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSTU.Digital.Messenger.Api", "src\VSTU.Digital.Messenger.Api\VSTU.Digital.Messenger.Api.csproj", "{7BFB869A-3552-447B-B0E3-7328F6DD0BBC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C413C747-BCB8-4FBA-847B-ACDF2E18477F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C413C747-BCB8-4FBA-847B-ACDF2E18477F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C413C747-BCB8-4FBA-847B-ACDF2E18477F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C413C747-BCB8-4FBA-847B-ACDF2E18477F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B315414-3295-4976-8798-04041121C5BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B315414-3295-4976-8798-04041121C5BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B315414-3295-4976-8798-04041121C5BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B315414-3295-4976-8798-04041121C5BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25E60EEB-434C-499E-BE67-DF9FACE7DCF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25E60EEB-434C-499E-BE67-DF9FACE7DCF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25E60EEB-434C-499E-BE67-DF9FACE7DCF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25E60EEB-434C-499E-BE67-DF9FACE7DCF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A130F3C4-F1AF-4E43-9929-BC1B7BC62D21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A130F3C4-F1AF-4E43-9929-BC1B7BC62D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A130F3C4-F1AF-4E43-9929-BC1B7BC62D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A130F3C4-F1AF-4E43-9929-BC1B7BC62D21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BFB869A-3552-447B-B0E3-7328F6DD0BBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BFB869A-3552-447B-B0E3-7328F6DD0BBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BFB869A-3552-447B-B0E3-7328F6DD0BBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BFB869A-3552-447B-B0E3-7328F6DD0BBC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C413C747-BCB8-4FBA-847B-ACDF2E18477F} = {17486FCD-4BD5-4BF3-8731-2047F93620F2}
+		{1B315414-3295-4976-8798-04041121C5BE} = {17486FCD-4BD5-4BF3-8731-2047F93620F2}
+		{25E60EEB-434C-499E-BE67-DF9FACE7DCF3} = {17486FCD-4BD5-4BF3-8731-2047F93620F2}
+		{A130F3C4-F1AF-4E43-9929-BC1B7BC62D21} = {17486FCD-4BD5-4BF3-8731-2047F93620F2}
+		{7BFB869A-3552-447B-B0E3-7328F6DD0BBC} = {17486FCD-4BD5-4BF3-8731-2047F93620F2}
+	EndGlobalSection
+EndGlobal
