@@ -12,6 +12,15 @@ builder.Services
 
 builder.Services.AddSignalR();
 builder.Services.AddControllers();
+builder.Services.AddCors(o =>
+{
+    o.AddPolicy(name: "AllowAnyOrigin", p =>
+    {
+        p.AllowAnyOrigin();
+        p.AllowAnyMethod();
+        p.AllowAnyHeader();
+    });
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -29,6 +38,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors("AllowAnyOrigin");
 
 app.MapControllers();
 app.MapHub<ChatHub>("/chatHub");

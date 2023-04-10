@@ -23,7 +23,9 @@ public sealed class CreateUsersCommandHandler : ICommandHandler<CreateUsersComma
         var usernames = await _userRepository.GetUsernames();
         var users = request.Users.Select(user => new User
             {
-                Username = ShortGuid.NewUsername(usernames),
+                Username = user.GroupName == string.Empty ? 
+                    ShortGuid.NewTeacherUsername(usernames) :
+                    ShortGuid.NewStudentUsername(usernames),
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Patronymic = user.Patronymic,

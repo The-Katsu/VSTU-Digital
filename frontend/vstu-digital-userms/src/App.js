@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Route, Navigate, Routes } from 'react-router-dom';
 import HomePage from './Pages/HomePage';
 import LoginPage from './Pages/LoginPage';
+import GetUsersPage from "./Pages/GetUsers";
+import AddStudentsPage from "./Pages/AddStudentsPage";
 import {useState} from "react";
 
 function App() {
@@ -15,6 +17,8 @@ function App() {
           <Routes>
               <Route exact path="/" element={isLoggedIn ? <HomePage/> : <Navigate to="/login"/>}/>
               <Route exact path="/login" element={<LoginPage onLogin={handleLogin}/>}/>
+              <Route exact path="/get-users" element={GetUsersPage()}/>}/>
+              <Route exact path="/add-students" element={AddStudentsPage()}/>}/>
           </Routes>
       </Router>
   );

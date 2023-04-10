@@ -21,7 +21,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasData(
             new User
             {
-                Id = 9999,
+                Id = 1,
                 Username = "admin",
                 FirstName = "admin",
                 LastName = "admin",

@@ -21,11 +21,19 @@ public static class ShortGuid
         return sb.ToString();
     }
 
-    public static string NewUsername(List<string> usernames)
+    public static string NewStudentUsername(List<string> usernames)
     {
         var username = $"St%{NewGuid()}";
         while (usernames.Contains(username)) 
             username = $"St%{NewGuid()}";
+        return username;
+    }
+    
+    public static string NewTeacherUsername(List<string> usernames)
+    {
+        var username = $"Th%{NewGuid()}";
+        while (usernames.Contains(username)) 
+            username = $"Th%{NewGuid()}";
         return username;
     }
 
