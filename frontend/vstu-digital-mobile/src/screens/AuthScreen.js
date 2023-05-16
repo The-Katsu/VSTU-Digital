@@ -8,6 +8,10 @@ function AuthScreen({navigation}) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+    /*if(AsyncStorage.getItem != null) {
+        navigation.navigate('Chats');
+    }*/
+
     const handleLogin = async () => {
         try {
             const authService = new AuthService();
@@ -22,7 +26,6 @@ function AuthScreen({navigation}) {
 
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Text>Login Screen</Text>
             <AuthForm
                 username={username}
                 password={password}

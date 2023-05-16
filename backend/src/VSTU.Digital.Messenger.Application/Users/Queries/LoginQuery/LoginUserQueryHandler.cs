@@ -34,7 +34,8 @@ public sealed class LoginUserQueryHandler : IQueryHandler<LoginUserQuery, LoginU
             return Result.Fail<LoginUserResponse>($"Wrong password for username: {request.Username}");
 
         var token = _jwtService.GenerateToken(user);
+        var userDto = new UserDto(user.Username, user.FirstName, user.LastName, user.Patronymic, user.GroupName);
         
-        return Result.Ok(new LoginUserResponse(token));
+        return Result.Ok(new LoginUserResponse(token, userDto));
     }
 }
