@@ -28,7 +28,7 @@ public sealed class LoginUserQueryHandler : IQueryHandler<LoginUserQuery, LoginU
         if (user is null)
             return Result.Fail<LoginUserResponse>($"User with username {request.Username} was not found.");
 
-        var isPasswordCorrect = user.Password == request.Password;
+        var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
         
         if (!isPasswordCorrect)
             return Result.Fail<LoginUserResponse>($"Wrong password for username: {request.Username}");

@@ -17,18 +17,5 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.GroupName).HasMaxLength(50);
 
         builder.HasIndex(u => u.Username).IsUnique();
-        
-        builder.HasData(
-            new User
-            {
-                Id = 1,
-                Username = "admin",
-                FirstName = "admin",
-                LastName = "admin",
-                Patronymic = "admin",
-                GroupName = "admin",
-                Password = "!1AdMiN0?",
-                RoleId = 1
-            });
     }
 }

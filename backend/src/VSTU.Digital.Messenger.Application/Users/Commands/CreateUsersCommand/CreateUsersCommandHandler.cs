@@ -21,17 +21,34 @@ public sealed class CreateUsersCommandHandler : ICommandHandler<CreateUsersComma
     public async Task<Result> Handle(CreateUsersCommand request, CancellationToken cancellationToken)
     {
         var usernames = await _userRepository.GetUsernames();
-        var users = request.Users.Select(user => new User
+        
+        var newUsers = request
+            .Users
+            .Where(x => !usernames.Contains(x.Username))
+            .ToList();
+        
+        var existedUsers = request.Users.Except(newUsers).ToList();
+
+        foreach (var user in existedUsers)
+        {
+            var existedUser = await _userRepository.FindByUsername(user.Username);
+            
+            if (existedUser == null) continue;
+            existedUser.FirstName = user.FirstName;
+            existedUser.LastName = user.LastName;
+            existedUser.Patronymic = user.Patronymic;
+            existedUser.GroupName = user.GroupName;
+        }
+        
+        var users = newUsers.Select(user => new User
             {
-                Username = user.GroupName == string.Empty ? 
-                    ShortGuid.NewTeacherUsername(usernames) :
-                    ShortGuid.NewStudentUsername(usernames),
+                Username = user.Username,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Patronymic = user.Patronymic,
                 GroupName = user.GroupName,
-                Password = ShortGuid.NewPassword(),
-                RoleId = user.GroupName == string.Empty ? 2 : 3
+                Password = BCrypt.Net.BCrypt.HashPassword(user.Password),
+                RoleId = user.IsTeacher ? 2 : 3
             })
             .ToList();
 
