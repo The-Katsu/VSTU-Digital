@@ -2,4 +2,5 @@
 
 public record GetChatsResponseItem(
     int Id,
-    string Name);
+    string Name,
+    string Creator);

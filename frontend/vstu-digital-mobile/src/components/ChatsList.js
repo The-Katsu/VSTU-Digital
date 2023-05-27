@@ -1,28 +1,59 @@
 import {Button, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import React, {useEffect, useState} from "react";
-import ChatsService from "../services/ChatsService";
+import ChatsService, {createChat} from "../services/ChatsService";
 import appTheme from "../../theme";
+import {getGroups} from "../dal/firebase";
+import SelectDropdown from 'react-native-select-dropdown'
+import {decodeToken} from "../services/AuthService";
+import {claims} from "../../config";
 
 function ChatsList({navigation}){
     const chatService = new ChatsService();
     const [chats, setChats] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [chatName, setChatName] = useState('');
+    const [groups, setGroups] = useState([]);
+    const [selectedGroups, setSelectedGroups] = useState([]);
+    const [decodedToken, setDecodedToken] = useState({})
 
-    const handleCreateChat = async () => {
-        const newChat = await chatService.createChat(chatName);
-        setChats([...chats, newChat]);
-        setIsModalVisible(false);
+    useEffect(() => {
+        fetchChats().then();
+        decodeToken().then((data) => {
+            setDecodedToken(data)
+        });
+    }, []);
+
+    const handleCreateChat = () => {
+        createChat(chatName, selectedGroups)
+            .then((data) => {
+                setChats([...chats, data]);
+                setIsModalVisible(false);
+            })
+            .catch((e) => {
+                console.log(e.message);
+                setIsModalVisible(false);
+            });
     };
+
+    const openModal = async () => {
+        const groups = await getGroups();
+        setGroups(groups);
+        setIsModalVisible(true);
+    }
 
     const fetchChats = async () => {
         const chats = await chatService.getChats();
         setChats(chats);
+        setSelectedGroups([])
     };
 
-    useEffect(() => {
-        fetchChats().then();
-    }, []);
+    const cancelModal = async () => {
+        setIsModalVisible(false);
+        setSelectedGroups([]);
+        setChatName('');
+    }
+
+
 
     const navigateToChatScreen = (chatId) => {
         navigation.navigate('Chat', { chatId });
@@ -31,30 +62,87 @@ function ChatsList({navigation}){
     const renderChat = ({ item }) => (
         <TouchableOpacity style={styles.chatContainer} onPress={() => navigateToChatScreen(item.id)}>
             <Text style={styles.chatName}>{item.name}</Text>
+            <Text style={styles.chatCreatorName}>{item.creator}</Text>
         </TouchableOpacity>
     );
 
+    const removeSelectedItem = (item) => {
+        setGroups([...groups, item]);
+        const temp = [...selectedGroups];
+        const idx = temp.indexOf(item);
+        temp.splice(idx, 1);
+        setSelectedGroups(temp);
+    }
+
+    const onGroupSelect = (selectedItem, index) => {
+        setSelectedGroups([...selectedGroups, selectedItem])
+        const temp = [...groups];
+        temp.splice(index, 1);
+        setGroups(temp);
+    }
+
+    const renderSelectedGroups = ({item}) => (
+        <View style={styles.row}>
+            <Text style={styles.selectedGroupText}>{item}</Text>
+            <TouchableOpacity style={styles.removeSelectedGroupBtn}>
+                <Text
+                    onPress={() => removeSelectedItem(item)}
+                    style={styles.removeSelectedGroupBtnText}>X</Text>
+            </TouchableOpacity>
+        </View>
+    )
+
     return(
-        <View>
+        <View >
+            <Text>{'\n'}</Text>
             <FlatList
+                style={{height: '85%'}}
                 data={chats}
                 renderItem={renderChat}
                 keyExtractor={chat => chat.id.toString()}
             />
-            <View style={styles.createChatContainer}>
-                <Button title="Create Chat" onPress={() => setIsModalVisible(true)} />
-            </View>
+            {
+                decodedToken[claims.role] === 'Преподаватель' ?
+                <TouchableOpacity
+                    onPress={() => openModal()}
+                    style={styles.createChatContainer}>
+                    <Text style={styles.createChatBtnText}>Создать чат</Text>
+                </TouchableOpacity>
+                    :
+                    null
+            }
+
             <Modal visible={isModalVisible} animationType="slide">
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
-                                placeholder="Chat Name"
+                                placeholder="Название чата"
+                                placeholderTextColor={appTheme.COLORS.secondary}
                                 onChangeText={text => setChatName(text)}
                                 value={chatName}
                             />
                         </View>
+                        <SelectDropdown
+                            buttonStyle={[styles.dropdown, styles.dropdownBtn]}
+                            dropdownStyle={styles.dropdown}
+                            rowTextStyle={styles.dropdownText}
+                            buttonTextStyle={styles.dropdownText}
+                            defaultButtonText={'Выберите группу(ы)'}
+                            data={groups}
+                            onSelect={onGroupSelect}
+                            buttonTextAfterSelection={(selectedItem, index) => {
+                                return 'Выберите группу(ы)'
+                            }}
+                        />
+                        <Text style={styles.lstText}>
+                            Список групп:
+                        </Text>
+                        <FlatList
+                            data={selectedGroups}
+                            renderItem={renderSelectedGroups} />
+
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity
                                 style={[styles.button, styles.createButton]}
@@ -64,7 +152,7 @@ function ChatsList({navigation}){
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.button, styles.cancelButton]}
-                                onPress={() => setIsModalVisible(false)}
+                                onPress={() => cancelModal()}
                             >
                                 <Text style={styles.buttonText}>Отмена</Text>
                             </TouchableOpacity>
@@ -77,14 +165,70 @@ function ChatsList({navigation}){
 }
 
 const styles = StyleSheet.create({
+    selectedGroupText: {
+        fontFamily: appTheme.FONTS.montserratMedium,
+        fontSize: 16,
+        marginTop: 2
+    },
+    removeSelectedGroupBtn: {
+
+    },
+    chatCreatorName: {
+        fontFamily: appTheme.FONTS.montserratMedium,
+        color: appTheme.COLORS.primary,
+        fontSize: 14,
+        textAlign: 'center'
+    },
+    removeSelectedGroupBtnText: {
+        fontFamily: appTheme.FONTS.montserratMedium,
+        color: appTheme.COLORS.primary,
+        fontSize: 20,
+        textAlign: 'right'
+    },
+    row: {
+        marginTop: 5,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        borderColor: appTheme.COLORS.secondary,
+        borderBottomWidth: 2,
+
+    },
     chatContainer: {
         borderBottomWidth: 1,
-        borderColor: '#ccc',
-        padding: 20,
+        borderColor: appTheme.COLORS.primary,
+        padding: 10,
+        borderWidth: 2,
+        borderRadius: 20,
+        margin: 2,
+    },
+    input: {
+        borderColor: appTheme.COLORS.secondary,
+        borderWidth: 2,
+        borderRadius: 20,
+        textAlign: 'center',
+        fontFamily: appTheme.FONTS.montserratMedium,
+        color: appTheme.COLORS.secondary,
+        height: 40,
+        fontSize: 18,
+    },
+    dropdownText: {
+        color: appTheme.COLORS.white,
+        fontFamily: appTheme.FONTS.montserratMedium,
+        fontSize: 16
+    },
+    dropdown: {
+        borderRadius: 20,
+        backgroundColor: appTheme.COLORS.secondary
+    },
+    dropdownBtn: {
+        width: '100%',
+        height: 40
     },
     chatName: {
-        fontSize: 18,
-        fontWeight: 'bold',
+        fontSize: 20,
+        fontFamily: appTheme.FONTS.montserratMedium,
+        textAlign: 'center',
+        color: appTheme.COLORS.primary
     },
     createChatContainer: {
         paddingHorizontal: 20,
@@ -92,6 +236,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-end',
         alignItems: 'center',
+    },
+    createChatBtnText: {
+        fontSize: 20,
+        borderRadius: 5,
+        borderWidth: 2,
+        marginTop: 10,
+        marginRight: 10,
+        color: appTheme.COLORS.primary,
+        borderColor: appTheme.COLORS.primary,
+        fontFamily: appTheme.FONTS.montserratMedium
     },
     modalContainer: {
         flex: 1,
@@ -110,28 +264,19 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         width: '100%'
     },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        width: '100%',
-        fontSize: 16
-    },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
         width: '100%',
-        marginTop: 20
+        marginTop: 20,
     },
     createButton: {
-        backgroundColor: '#2196f3',
+        backgroundColor: appTheme.COLORS.secondary,
         borderRadius: 20,
-        width: '30%'
+        width: '30%',
     },
     cancelButton: {
-        backgroundColor: 'red',
+        backgroundColor: appTheme.COLORS.primary,
         borderRadius: 20,
         width: '30%'
     },
@@ -141,6 +286,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         fontFamily: appTheme.FONTS.montserratMedium
+    },
+    lstText: {
+        fontFamily: appTheme.FONTS.montserratMedium,
+        color: appTheme.COLORS.secondary
     }
 });
 

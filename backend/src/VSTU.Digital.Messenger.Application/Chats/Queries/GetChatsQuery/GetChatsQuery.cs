@@ -2,4 +2,4 @@
 
 namespace VSTU.Digital.Messenger.Application.Chats.Queries.GetChatsQuery;
 
-public record GetChatsQuery() : IQuery<List<GetChatsResponseItem>>;
+public record GetChatsQuery(int UserId) : IQuery<List<GetChatsResponseItem>>;

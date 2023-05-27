@@ -17,6 +17,7 @@ yarn-debug.log*
 yarn-error.log*
 /.changelog
 .npm/
+.env
 
 # Ignore only specific Rider files/directories
 # For syntax see: https://stackoverflow.com/a/14422549/12124
@@ -499,3 +500,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+frontend/vstu-digital-mobile/config.js
+frontend/vstu-digital-mobile/config.js
+frontend/vstu-digital-mobile/config.js
+frontend/vstu-digital-mobile/config.js

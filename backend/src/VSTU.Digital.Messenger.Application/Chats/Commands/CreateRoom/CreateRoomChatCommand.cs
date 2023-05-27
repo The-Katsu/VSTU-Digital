@@ -2,4 +2,7 @@
 
 namespace VSTU.Digital.Messenger.Application.Chats.Commands.CreateRoom;
 
-public record CreateRoomChatCommand(string Name) : ICommand<CreateRoomChatResponse>;
+public record CreateRoomChatCommand(
+    string Name, 
+    string[] Groups,
+    int CreatorId) : ICommand<CreateRoomChatResponse>;

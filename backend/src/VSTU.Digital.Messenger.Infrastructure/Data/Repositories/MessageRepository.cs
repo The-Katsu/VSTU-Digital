@@ -14,4 +14,12 @@ public class MessageRepository : IMessageRepository
         await _dbContext.Messages
             .Include(x => x.Sender)
             .FirstAsync(x => x.Id == id);
+
+    public async Task<List<Message>> GetChatMessagesAsync(int chatId) =>
+        await _dbContext
+            .Messages
+            .Include(x => x.Sender)
+            .Where(x => x.ChatId == chatId)
+            .OrderBy(x => x.Timestamp)
+            .ToListAsync();
 }

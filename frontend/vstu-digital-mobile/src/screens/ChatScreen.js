@@ -1,23 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import {
+    View,
+    Text,
+    TextInput,
+    Button,
+    StyleSheet,
+    TouchableOpacity,
+    ScrollView,
+    KeyboardAvoidingView,
+    Platform, SafeAreaView
+} from 'react-native';
+import { useHeaderHeight } from '@react-navigation/elements'
 import ChatService from '../services/ChatService';
+import appTheme from "../../theme";
+import {decodeToken} from "../services/AuthService";
+import {claims} from "../../config";
 
 const ChatScreen = ({ route }) => {
+    const height = useHeaderHeight();
     const [messages, setMessages] = useState([
-        { text: "Hello", name: "Alice", time: "9:00 AM" },
-        { text: "Hi there", name: "Bob", time: "9:01 AM" },
-        { text: "How are you?", name: "Alice", time: "9:02 AM" },
+        { text: "Здравствуйте", name: "Студент0 И.О.", time: "27/05/2023 12:12:02" },
+        { text: "Когда пара ?", name: "Стдуент1 И.О.", time: "27/05/2023 12:17:23" },
+        { text: "Коллеги, встречаемся в 14:00 в В-1401", name: "Учитель И.О.", time: "27/05/2023 12:19:51" },
     ]);
     const [inputMessage, setInputMessage] = useState('privet');
     const [chatService, setChatService] = useState(null);
+    const [chatId, setChatId] = useState(0);
+    const [userId, setUserId] = useState(0);
 
     useEffect(() => {
+        decodeToken().then((data) => {
+            setUserId(data[claims.id])
+            console.log(data[claims.id])
+        })
         const initializeConnection = async () => {
             const service = new ChatService();
             await service.initializeConnection();
-            const { chatId } = route.params;
-            console.log(chatId)
-            await service.startConnection(chatId);
+            const id  = route.params.chatId;
+            setChatId(id);
+            await service.startConnection(id);
             setChatService(service);
         };
 
@@ -30,6 +51,7 @@ const ChatScreen = ({ route }) => {
 
     useEffect(() => {
         const handleIncomingMessage = (message) => {
+            console.log(message)
             setMessages((prevMessages) => [...prevMessages, message]);
         };
 
@@ -52,23 +74,140 @@ const ChatScreen = ({ route }) => {
     };
 
     return (
-        <View>
-            <Text>Chat Screen</Text>
-            <View>
+        <SafeAreaView style={{ flex: 1 }}>
+            <View style={styles.header}>
+                <Text style={styles.headerText}>
+                    {"Тест СУБД"}
+                </Text>
+            </View>
+            <ScrollView
+                style={styles.messages}
+                contentContainerStyle={{ flexGrow: 1 }}
+            >
                 {messages.map((message, index) => (
-                    <View key={index}>
-                        <Text>{message.text}</Text>
-                        <Text>{message.name}</Text>
-                        <Text>{message.time}</Text>
+                    message.senderId == userId ?
+                        <View>
+                            <View style={styles.messageBlock2} key={index}>
+                                <Text style={styles.messageText}>{message.text}</Text>
+                                <Text style={styles.messageSender}>{'Авилов В.С.'}</Text>
+                                <Text style={styles.messageTime}>{message.time}</Text>
+                            </View>
+                        </View> :
+                    <View style={styles.messageBlock} key={index}>
+                        <Text style={styles.messageText}>{message.text}</Text>
+                        <Text style={styles.messageSender}>{message.name}</Text>
+                        <Text style={styles.messageTime}>{message.time}</Text>
                     </View>
                 ))}
-            </View>
-            <View>
-                <TextInput value={inputMessage} onChangeText={setInputMessage} />
-                <Button title="Send" onPress={handleSendMessage} />
-            </View>
-        </View>
+            </ScrollView>
+            <KeyboardAvoidingView
+                keyboardVerticalOffset={height + 37}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={styles.keyboardAvoidingContainer}
+            >
+                <TextInput
+                    style={styles.messageInput}
+                    value={inputMessage}
+                    onChangeText={setInputMessage}
+                />
+                <TouchableOpacity
+                    style={styles.sentBtn}
+                    onPress={handleSendMessage}
+                >
+                    <Text
+                    style={styles.sentText}
+                    >Отправить</Text>
+                </TouchableOpacity>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 };
 
-export default ChatScreen;
+export const styles = StyleSheet.create({
+    header: {
+        height: '7%',
+        borderBottomWidth: 2,
+        borderTopWidth: 2,
+        borderColor: appTheme.COLORS.primary
+    },
+    messages: {
+        height: '90%'
+    },
+    keyboardAvoidingContainer: {
+        marginTop: '3%',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+
+    },
+    messageInput: {
+        width: '65%',
+        borderWidth: 1,
+        borderRadius: 20,
+        marginLeft: 5,
+        marginRight: 5,
+        fontSize: 20,
+        fontFamily: appTheme.FONTS.montserratMedium,
+        paddingLeft: 10,
+        paddingRight: 10,
+        borderColor: appTheme.COLORS.primary,
+        color: appTheme.COLORS.primary
+    },
+    sentBtn: {
+        borderWidth: 1,
+        borderRadius: 20,
+        borderColor: appTheme.COLORS.primary,
+        backgroundColor: appTheme.COLORS.primary
+    },
+    sentText: {
+        fontSize: 20,
+        fontFamily: appTheme.FONTS.montserratMedium,
+        color: appTheme.COLORS.white
+    },
+    messageBlock: {
+        borderWidth: 1,
+        borderRadius: 20,
+        borderColor: appTheme.COLORS.primary,
+        padding: 5,
+        margin: 5,
+        width: '70%'
+    },
+    messageLabel: {
+        fontSize: 14,
+        fontFamily: appTheme.FONTS.montserratMedium,
+        color: appTheme.COLORS.primary
+    },
+    headerText: {
+        fontSize: 38,
+        fontFamily: appTheme.FONTS.montserratMedium,
+        color: appTheme.COLORS.primary,
+        textAlign: "center"
+    },
+    messageText: {
+        fontSize: 14,
+        fontFamily: appTheme.FONTS.montserratMedium,
+        color: appTheme.COLORS.primary
+    },
+    messageSender: {
+        fontSize: 12,
+        fontFamily: appTheme.FONTS.montserratMedium,
+        color: appTheme.COLORS.primary,
+        textAlign: 'right'
+    },
+    messageTime: {
+        fontSize: 12,
+        fontFamily: appTheme.FONTS.montserratMedium,
+        color: appTheme.COLORS.primary,
+        textAlign: 'right'
+    },
+    messageBlock2: {
+        borderWidth: 1,
+        borderRadius: 20,
+        borderColor: appTheme.COLORS.primary,
+        padding: 5,
+        margin: 5,
+        width: '70%',
+        marginLeft: '28%'
+    }
+});
+
+export default ChatScreen

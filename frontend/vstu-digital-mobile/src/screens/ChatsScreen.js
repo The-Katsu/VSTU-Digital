@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image} from 'react-native';
+import {StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, Button} from 'react-native';
 import Toggle  from "react-native-toggle-element";
 import appTheme from "../../theme";
 import ChatsList from "../components/ChatsList";
@@ -8,6 +8,7 @@ import Timetable from "../components/Timetable";
 const ChatsScreen = ({ navigation }) => {
 
     const [toggleValue, setToggleValue] = useState(false);
+
     const colorStyles = (value) => value ?
         {color: appTheme.COLORS.white}
         :
@@ -30,14 +31,8 @@ const ChatsScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-                <TouchableOpacity
-                    onPress={ToUserPage}
-                    style={styles.item}>
-                    <Image
-
-                        source={require('../../assets/user.png')} />
-                </TouchableOpacity>
-                <View style={{marginLeft: '25%'}}>
+            <View style={styles.row}>
+                <View style={styles.toggle}>
                     <Toggle
                         value={toggleValue} onPress={(val) => setToggleValue(val)}
                         leftComponent={<Text style={colorStyles(!toggleValue)}>Чат</Text>}
@@ -61,16 +56,27 @@ const ChatsScreen = ({ navigation }) => {
                     />
                 </View>
 
-                {
-                    toggleValue === false ?
-                        <ChatsList
-                            navigation={navigation}
-                        />
-                        :
-                        <Timetable
-                            ItemSeparator={ItemSeparator}
-                        />
-                }
+                <TouchableOpacity
+                    onPress={ToUserPage}
+                    style={styles.profile}>
+                    <Image
+                        style={styles.icon}
+                        source={require('../../assets/user.png')} />
+                </TouchableOpacity>
+            </View>
+
+
+
+            {
+                toggleValue === false ?
+                    <ChatsList
+                        navigation={navigation}
+                    />
+                    :
+                    <Timetable
+                        ItemSeparator={ItemSeparator}
+                    />
+            }
 
         </SafeAreaView>
     );
@@ -81,12 +87,24 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
-    item: {
-        marginLeft: '85%' // is 50% of container width
-    },
     label: {
         marginLeft: '50%'
-    }
+    },
+    toggle: {
+        marginLeft: '25%'
+    },
+    profile: {
+        marginLeft: '10%',
+        marginTop: '2%'
+    },
+    icon: {
+
+    },
+    row: {
+        marginTop: '3%',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+    },
 });
 
 

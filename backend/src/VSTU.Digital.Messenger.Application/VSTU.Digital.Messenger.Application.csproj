@@ -16,4 +16,8 @@
     <ProjectReference Include="..\VSTU.Digital.Messenger.Infrastructure\VSTU.Digital.Messenger.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Tokens\Queries\" />
+  </ItemGroup>
+
 </Project>

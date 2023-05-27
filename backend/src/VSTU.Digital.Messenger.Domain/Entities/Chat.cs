@@ -5,7 +5,9 @@ public class Chat
     public int Id { get; set; }
     public string Name { get; set; }
     public bool IsGroupChat { get; set; }
+    public virtual User Creator { get; set; }
 
+    public virtual ICollection<Group> Groups { get; set; }
     public virtual ICollection<Message> Messages { get; set; }
     public virtual ICollection<UserChat> UserChats { get; set; }
 }

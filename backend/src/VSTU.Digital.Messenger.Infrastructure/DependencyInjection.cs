@@ -48,6 +48,7 @@ public static class DependencyInjection
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IMessageRepository, MessageRepository>();
         services.AddScoped<IChatRepository, ChatRepository>();
+        services.AddScoped<IGroupRepository, GroupRepository>();
         
         return services;
     }

@@ -5,6 +5,7 @@ namespace VSTU.Digital.Messenger.Infrastructure.Data.Repositories;
 public interface IUserRepository
 {
     public Task<User?> FindByUsername(string username);
+    public Task<User?> GetById(int id);
     public Task<List<string>> GetUsernames();
     public Task CreateUsers(List<User> users);
     public Task<List<User>> GetAllAsync();

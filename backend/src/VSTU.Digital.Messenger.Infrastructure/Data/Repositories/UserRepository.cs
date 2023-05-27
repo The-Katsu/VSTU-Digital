@@ -16,6 +16,10 @@ public class UserRepository : IUserRepository
                 x != null &&
                 x.Username == username);
 
+    public Task<User?> GetById(int id) => _dbContext
+        .Users
+        .SingleOrDefaultAsync(x => x.Id == id);
+
     public async Task<List<string>> GetUsernames() =>
         await _dbContext.Users
             .Select(x => x.Username)

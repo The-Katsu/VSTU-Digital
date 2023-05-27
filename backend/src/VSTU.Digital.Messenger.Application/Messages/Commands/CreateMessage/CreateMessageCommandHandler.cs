@@ -39,7 +39,8 @@ public class CreateMessageCommandHandler : ICommandHandler<CreateMessageCommand,
         var response = new CreateMessageResponse(
             message.Text, 
             message.Sender.Username,
-            message.Timestamp.ToString("G"));
+            message.Sender.Id,
+            message.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"));
 
         return Result.Ok(response);
     }

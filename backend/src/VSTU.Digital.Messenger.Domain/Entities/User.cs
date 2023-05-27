@@ -12,6 +12,7 @@ public class User
     public int RoleId { get; set; }
 
     public virtual Role Role { get; set; }
+    public virtual ICollection<Chat> ChatsCreated { get; set; }
     public virtual ICollection<Message> Messages { get; set; }
     public virtual ICollection<UserChat> UserChats { get; set; }
 }

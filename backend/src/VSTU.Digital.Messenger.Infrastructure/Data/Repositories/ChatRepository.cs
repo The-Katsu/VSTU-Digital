@@ -11,4 +11,24 @@ public class ChatRepository : IChatRepository
     public ChatRepository(MessengerDbContext dbContext) => _dbContext = dbContext;
 
     public async Task<List<Chat>> GetListAsync() => await _dbContext.Chats.ToListAsync();
+
+    public async Task<List<Chat>> GetChatsByGroup(string group) => await _dbContext
+        .Chats
+        .Where(x => x.Groups.Any(g => g.Name == group))
+        .ToListAsync();
+
+    public async Task<List<Chat>> GetTeacherChats(int id) => await _dbContext
+        .Chats
+        .Where(x => x.Creator.Id == id)
+        .Include(x => x.Creator)
+        .ToListAsync();
+
+    public async Task<List<Chat>> GetStudentChats(string group) => await _dbContext
+        .Chats
+        .Where(x => x
+            .Groups
+            .Select(g => g.Name)
+            .Contains(group))
+        .Include(x => x.Creator)
+        .ToListAsync();
 }

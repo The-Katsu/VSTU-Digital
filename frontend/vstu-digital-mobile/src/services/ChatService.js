@@ -1,6 +1,8 @@
 import {HubConnectionBuilder} from '@microsoft/signalr';
-import {API_URL} from "../../config";
+import {API_URL, WS_URL} from "../../config";
 import AuthService from "./AuthService";
+
+
 
 class ChatService {
     constructor() {
@@ -9,7 +11,7 @@ class ChatService {
 
     initializeConnection() {
         this.connection = new HubConnectionBuilder()
-            .withUrl(`${API_URL}/chatHub`)
+            .withUrl(`${WS_URL}/chatHub`)
             .build();
     }
 
@@ -52,7 +54,7 @@ class ChatService {
             console.log(req);
             const authService = new AuthService();
             const token = await authService.getToken();
-            const response = await fetch(`${API_URL}/sendMessage`, {
+            const response = await fetch(`${API_URL}/Messages/send`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

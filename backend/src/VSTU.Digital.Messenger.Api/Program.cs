@@ -1,3 +1,4 @@
+using Microsoft.OpenApi.Models;
 using VSTU.Digital.Messenger.Application;
 using VSTU.Digital.Messenger.Infrastructure;
 using VSTU.Digital.Messenger.Presentation.Hubs;
@@ -24,7 +25,17 @@ builder.Services.AddCors(o =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "VSTU listener, communication module - V1",
+        Version = "v1"
+    });
+
+    var filePath = Path.Combine(AppContext.BaseDirectory, "VSTU.Digital.Messenger.Api.xml");
+    c.IncludeXmlComments(filePath, includeControllerXmlComments: true);
+});
 
 var app = builder.Build();
 

@@ -2,5 +2,6 @@
 
 public sealed record CreateMessageResponse(
     string Text, 
-    string Name, 
+    string SenderName,
+    int SenderId,
     string Time);

@@ -1,5 +1,49 @@
-import { API_URL, User, SetUser } from '../../config';
+import { API_URL } from '../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from 'jwt-decode';
+
+export const verifyToken = async () => {
+    const token = await AsyncStorage.getItem('token');
+    const response = await fetch(`${API_URL}/Account/isAuthenticated`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+
+    return response.ok;
+}
+
+export const decodeToken = async () => {
+    const token = await AsyncStorage.getItem('token');
+    const decoded = jwt_decode(token);
+    console.log(decoded);
+    return decoded;
+}
+
+export const signIn = async (username, password) => {
+    const response = await fetch(`${API_URL}/Account/login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            username: username,
+            password: password
+        })
+    })
+
+    if (response.status === 400) {
+        const error = await response.text();
+        throw new Error(error)
+    }
+
+    if (response.ok) {
+        const data = await response.json();
+        const token = data.token;
+        await AsyncStorage.setItem('token', token);
+    }
+}
 
 class AuthService {
     async login(username, password) {
@@ -15,17 +59,20 @@ class AuthService {
         });
 
         if (!response.ok) {
+            console.log(JSON.stringify({
+                username: username,
+                password: password
+            }))
             throw new Error('Unable to login');
         }
 
         const data = await response.json();
-        SetUser(data.user);
+        await AsyncStorage.setItem('token', data.token)
         return data.token;
     }
 
     async logout() {
         await AsyncStorage.clear;
-        SetUser({});
     }
 
     async getToken() {

@@ -24,7 +24,8 @@ public class JwtService : IJwtService
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.Username),
-            new(ClaimTypes.Role, user.Role.Name)
+            new(ClaimTypes.Role, user.Role.Name),
+            new(ClaimTypes.GroupSid, user.GroupName),
         };
 
         var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256);
@@ -47,7 +48,7 @@ public class JwtService : IJwtService
 
         var exp = jwtToken.Claims.FirstOrDefault(x => x.Type == "exp")?.Value;
         if (exp == null || !long.TryParse(exp, out var expTime))
-            throw new Exception("Invalid JWT token: missing or invalid expiration time.");
+            return false;
 
         var tokenExpTime = DateTimeOffset.FromUnixTimeSeconds(expTime).UtcDateTime;
         return tokenExpTime >= DateTime.UtcNow;

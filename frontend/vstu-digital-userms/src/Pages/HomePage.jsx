@@ -71,11 +71,7 @@ function HomePage() {
     return (
         <div className="container">
             <div className="jumbotron">
-                <h1 className="display-4">Welcome to the User Management System!</h1>
-                <p className="lead">
-                    This is the homepage of our app. You can navigate to other pages using
-                    the menu above.
-                </p>
+                <h1 className="display-4">Добро пожаловать в систему управления пользователями!</h1>
                 <hr className="my-4" />
             </div>
             <div>
