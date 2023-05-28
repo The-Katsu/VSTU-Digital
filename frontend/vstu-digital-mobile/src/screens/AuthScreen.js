@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, Image, SafeAreaView} from 'react-native';
+import React, {useState} from 'react';
+import {View, Image} from 'react-native';
 import AuthForm from '../components/AuthForm';
-import AuthService, {signIn, verifyToken} from '../services/AuthService';
+import {signIn} from '../services/AuthService';
 import ErrorAlert from "../components/ErrorAlert";
 
 function AuthScreen({navigation}) {
@@ -11,14 +11,7 @@ function AuthScreen({navigation}) {
     const [showModal, setShowModal] = useState(false);
     const [error, setError] = useState('');
 
-    useEffect(() => {
-        verifyToken().then((data) => {
-            //if (data) { navigation.navigate('Chats') }
-        })
-    }, [])
-
     const handleLogin = () => {
-        console.log(123)
         signIn(username, password)
             .then(() => navigation.navigate('Chats'))
             .catch((e) => {
