@@ -28,19 +28,6 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "chats",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
-                    name = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_chats", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "groups",
                 columns: table => new
                 {
@@ -64,30 +51,6 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_roles", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "chat_group",
-                columns: table => new
-                {
-                    chats_id = table.Column<int>(type: "integer", nullable: false),
-                    groups_id = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_chat_group", x => new { x.chats_id, x.groups_id });
-                    table.ForeignKey(
-                        name: "fk_chat_group_chats_chats_id",
-                        column: x => x.chats_id,
-                        principalTable: "chats",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_chat_group_groups_groups_id",
-                        column: x => x.groups_id,
-                        principalTable: "groups",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -117,6 +80,50 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                         name: "fk_users_roles_role_id",
                         column: x => x.role_id,
                         principalTable: "roles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "chats",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    owner_id = table.Column<int>(type: "integer", nullable: false, defaultValue: 1)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_chats", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_chats_users_owner_id",
+                        column: x => x.owner_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "chat_group",
+                columns: table => new
+                {
+                    chats_id = table.Column<int>(type: "integer", nullable: false),
+                    groups_id = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_chat_group", x => new { x.chats_id, x.groups_id });
+                    table.ForeignKey(
+                        name: "fk_chat_group_chats_chats_id",
+                        column: x => x.chats_id,
+                        principalTable: "chats",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_chat_group_groups_groups_id",
+                        column: x => x.groups_id,
+                        principalTable: "groups",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -155,7 +162,8 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                 {
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     chat_id = table.Column<int>(type: "integer", nullable: false),
-                    role_id = table.Column<int>(type: "integer", nullable: false)
+                    role_id = table.Column<int>(type: "integer", nullable: false),
+                    last_connection = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -204,6 +212,11 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                 name: "ix_chat_group_groups_id",
                 table: "chat_group",
                 column: "groups_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_chats_owner_id",
+                table: "chats",
+                column: "owner_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_messages_chat_id",

@@ -1,41 +1,71 @@
-﻿using VSTU.Digital.Messenger.Application.Abstractions.Messaging;
+﻿using Microsoft.EntityFrameworkCore;
+using VSTU.Digital.Messenger.Application.Abstractions.Messaging;
 using VSTU.Digital.Messenger.Domain.Common.Result;
 using VSTU.Digital.Messenger.Domain.Entities;
-using VSTU.Digital.Messenger.Infrastructure.Data.Repositories;
+using VSTU.Digital.Messenger.Infrastructure.Data.Contexts;
 
 namespace VSTU.Digital.Messenger.Application.Chats.Queries.GetChatsQuery;
 
 public class GetChatsQueryHandler : IQueryHandler<GetChatsQuery, List<GetChatsResponseItem>>
 {
-    private readonly IChatRepository _chatRepository;
-    private readonly IUserRepository _userRepository;
+    private readonly MessengerDbContext _dbContext;
 
-    public GetChatsQueryHandler(IChatRepository chatRepository, IUserRepository userRepository)
+    public GetChatsQueryHandler(MessengerDbContext dbContext) => _dbContext = dbContext;
+
+    private static string GetOwnerFio(User user) => $"{user.LastName} {user.FirstName}. {user.Patronymic}.";
+    private User GetOwner(int chatId) => _dbContext
+        .UserChats
+        .Where(x => 
+            x.ChatId == chatId || 
+            x.RoleId == 1)
+        .Select(x => x.User)
+        .FirstOrDefault()!;
+    
+    
+    public async Task<Result<List<GetChatsResponseItem>>> Handle(
+        GetChatsQuery request, 
+        CancellationToken cancellationToken)
     {
-        _chatRepository = chatRepository;
-        _userRepository = userRepository;
-    }
+        var user = await _dbContext
+            .Users
+            .Include(x => x.Group)
+            .SingleOrDefaultAsync(
+                x => x.Id == request.UserId, 
+                cancellationToken: cancellationToken);
 
-    public async Task<Result<List<GetChatsResponseItem>>> Handle(GetChatsQuery request, CancellationToken cancellationToken)
-    {
-        var user = await _userRepository.GetById(request.UserId);
+        var chats = user!.RoleId == 3 ? 
+            await _dbContext
+                .Chats
+                .Where(x => x.Groups.Any(x => x.Name == user.Group.Name))
+                .ToListAsync(cancellationToken)
+            :
+            await _dbContext
+                .Chats
+                .Where(x => x.UserChats.Any(u => u.UserId == user.Id))
+                .ToListAsync(cancellationToken);
 
-        var chats = Enumerable.Empty<Chat>();
+        var response = new List<GetChatsResponseItem>();
 
-        if (user!.RoleId == 2)
-            chats = await _chatRepository.GetTeacherChats(user.Id);
-        else
+        foreach (var chat in chats)
         {
-            //chats = await _chatRepository.GetStudentChats(user.GroupName);
+            var owner = $"{chat.Owner.LastName} {chat.Owner.FirstName.First()}. {chat.Owner.Patronymic.First()}.";
+            
+            var chatRef = await _dbContext
+                .UserChats
+                .SingleOrDefaultAsync(x => x.ChatId == chat.Id &&
+                            x.UserId == chat.OwnerId);
+            var msgCount = chat
+                .Messages
+                .Count(x => 
+                    x.Timestamp > chatRef!.LastConnection);
+
+            response.Add(new GetChatsResponseItem(
+                chat.Id,
+                chat.Name,
+                owner,
+                msgCount));
         }
         
-        var chatsResponse = chats
-            .Select(x => new GetChatsResponseItem(
-                x.Id,
-                x.Name,
-                ""
-                /*$"{x.Creator.LastName} {x.Creator.FirstName.First()}.{x.Creator.Patronymic.First()}."*/))
-            .ToList();
-        return Result.Ok(chatsResponse);
+        return Result.Ok(response);
     }
 }

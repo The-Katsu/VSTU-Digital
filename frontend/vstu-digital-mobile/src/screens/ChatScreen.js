@@ -3,7 +3,6 @@ import {
     View,
     Text,
     TextInput,
-    Button,
     StyleSheet,
     TouchableOpacity,
     ScrollView,
@@ -31,7 +30,6 @@ const ChatScreen = ({ route }) => {
     useEffect(() => {
         decodeToken().then((data) => {
             setUserId(data[claims.id])
-            console.log(data[claims.id])
         })
         const initializeConnection = async () => {
             const service = new ChatService();
@@ -58,7 +56,7 @@ const ChatScreen = ({ route }) => {
         chatService?.subscribeToIncomingMessages(handleIncomingMessage);
 
         return () => {
-            chatService?.unsubscribeFromIncomingMessages();
+            chatService?.unsubscribeFromIncomingMessages(chatId);
         };
     }, [chatService]);
 
@@ -70,11 +68,12 @@ const ChatScreen = ({ route }) => {
             setInputMessage('');
         } catch (error) {
             console.log('Error sending message to API:', error);
+
         }
     };
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: appTheme.COLORS.white }}>
             <View style={styles.header}>
                 <Text style={styles.headerText}>
                     {"Тест СУБД"}

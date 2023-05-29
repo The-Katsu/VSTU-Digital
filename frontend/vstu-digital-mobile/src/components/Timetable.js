@@ -1,4 +1,4 @@
-import {Alert, Button, FlatList, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {Button, FlatList, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import CalendarPicker from "react-native-calendar-picker";
 import appTheme from "../../theme";
 import React, {useEffect, useState} from "react";
@@ -7,14 +7,14 @@ import firebase from "firebase/compat";
 import {claims, firebaseConfig} from '../../config';
 import TimetableAlert from "./TimetableAlert";
 import {decodeToken} from "../services/AuthService";
+import {getStudentTimetable, getTeacherTimetable} from "../services/TimetableService";
 
-function Timetable({ItemSeparator}){
+function Timetable(){
     const currentDate = new Date();
     let minDate = new Date(currentDate);
     minDate.setFullYear(currentDate.getFullYear() - 1);
     let maxDate = new Date(currentDate);
     maxDate.setFullYear(currentDate.getFullYear() + 1);
-    const [timetables, setTimetables] = useState([]);
     const [selectedDate, setSelectedDate] = useState(currentDate.toISOString().slice(0,10));
     const [isCalendarVisible, setIsCalendarVisible] = useState(false);
     const [timetable, setTimetable] = useState([]);
@@ -22,59 +22,28 @@ function Timetable({ItemSeparator}){
     const app = firebase.initializeApp(firebaseConfig)
 
     const [group, setGroup] = useState('')
-
-    const [timetableDates, setTimetableDates] = useState([]);
-    const [timetableGroups, setTimetableGroups] = useState([]);
-    const [timetableTeacher, setTimetableTeacher] = useState('');
-    const [timetableType, setTimetableType] = useState('');
-    const [timetableTime, setTimetableTime] = useState('');
+    const [name, setName] = useState('')
 
     const handleDateChange = (date) => {
+        console.log(date)
         setSelectedDate(date.format('YYYY-MM-DD'));
         setIsCalendarVisible(false);
 
-        const arr = [];
-        firebase
-            .firestore(app)
-            .collection('2023first')
-            .where('dates', 'array-contains', date.format('YYYY-MM-DD'))
-            .get()
-            .then((query) => {
-                query.forEach((doc) => {
-                    arr.push(doc.data())
-                })
-                console.log(arr[0]['time'].split(':'))
-                arr.sort((a, b) => {
-                    const timeA = Number(a.time.split(':')[0]);
-                    const timeB = Number(b.time.split(':')[0]);
-                    if (timeA < timeB) {
-                        return -1;
-                    } else if (timeA > timeB) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                });
-            })
-            .then(() => setTimetable(arr));
-        console.log(timetable)
+        group === 'none' ?
+            getTeacherTimetable(date.format('YYYY-MM-DD'), name).then((r) => setTimetable(r)) :
+            getStudentTimetable(date.format('YYYY-MM-DD'), group).then((r) => setTimetable(r))
     }
 
     useEffect(() => {
-        decodeToken().then((data) => setGroup(data[claims.group]))
-        const arr = [];
-        firebase
-            .firestore(app)
-            .collection('2023first')
-            .where('dates', 'array-contains', selectedDate)
-            .where('groups', 'array-contains', group)
-            .get()
-            .then((query) => {
-                query.forEach((doc) => {
-                    arr.push(doc.data())
-                })
-            })
-            .then(() => setTimetable(arr));
+        decodeToken().then((data) => {
+            setGroup(data[claims.group])
+            setName(data['FIO'])
+
+            data[claims.group] === 'none' ?
+                getTeacherTimetable(selectedDate, data['FIO']).then((r) => setTimetable(r)) :
+                getStudentTimetable(selectedDate, data[claims.group]).then((r) => setTimetable(r))
+
+        })
     }, [])
 
 
@@ -105,7 +74,7 @@ function Timetable({ItemSeparator}){
         <TimetableAlert visible={showModal} onClose={() => setShowModal(false)}/>
         {isCalendarVisible && (
             <CalendarPicker
-                onDateChange={handleDateChange}
+                onDateChange={(date) => handleDateChange(date)}
                 minDate={minDate}
                 maxDate={maxDate}
                 weekdays={['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']}
@@ -170,7 +139,9 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 20,
         margin: 5,
-        borderColor: appTheme.COLORS.primary
+        borderColor: appTheme.COLORS.primary,
+        width: '90%',
+        marginLeft: '5%'
     },
 
 });

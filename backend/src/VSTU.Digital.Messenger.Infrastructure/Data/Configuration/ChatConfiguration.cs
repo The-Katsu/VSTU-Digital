@@ -10,5 +10,7 @@ public class ChatConfiguration : IEntityTypeConfiguration<Chat>
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
+
+        builder.Property(x => x.OwnerId).HasDefaultValue(1);
     }
 }

@@ -1,5 +1,4 @@
 import {API_URL} from "../../config";
-import AuthService from '../services/AuthService';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const createChat = async (name, groups) => {
@@ -23,43 +22,19 @@ export const createChat = async (name, groups) => {
     }
 }
 
-class ChatsService {
-
-    async getChats() {
-        const authService = new AuthService();
-        const token = await authService.getToken();
-        try {
-            const response = await fetch(`${API_URL}/Chat/getAll`, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            return await response.json();
-        } catch (error) {
-            console.error(error);
+export const getChats = async () => {
+    const token = await AsyncStorage.getItem('token');
+    const response = await fetch(`${API_URL}/Chat/get`, {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer ${token}`
         }
-    }
+    })
 
-    async createChat(name) {
-        const authService = new AuthService();
-        const token = await authService.getToken();
-        try {
-            const response = await fetch(`${API_URL}/create`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    name: name
-                }),
-            });
-            return await response.json();
-        } catch (error) {
-            console.error(error);
-        }
+    if (response.ok) {
+        return await response.json();
+    } else {
+        console.log(response.status)
+        throw new Error('error fetching chats')
     }
 }
-
-export default ChatsService;

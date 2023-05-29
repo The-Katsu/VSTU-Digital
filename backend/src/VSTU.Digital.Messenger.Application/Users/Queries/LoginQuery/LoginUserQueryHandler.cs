@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-using VSTU.Digital.Messenger.Application.Abstractions.Messaging;
+﻿using VSTU.Digital.Messenger.Application.Abstractions.Messaging;
 using VSTU.Digital.Messenger.Domain.Common.Result;
-using VSTU.Digital.Messenger.Domain.Entities;
 using VSTU.Digital.Messenger.Infrastructure.Authentication.Jwt;
-using VSTU.Digital.Messenger.Infrastructure.Data;
 using VSTU.Digital.Messenger.Infrastructure.Data.Repositories;
 
 namespace VSTU.Digital.Messenger.Application.Users.Queries.LoginQuery;

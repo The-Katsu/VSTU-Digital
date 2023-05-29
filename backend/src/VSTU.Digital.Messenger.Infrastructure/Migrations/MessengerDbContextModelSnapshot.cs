@@ -58,8 +58,17 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("name");
 
+                    b.Property<int>("OwnerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("owner_id");
+
                     b.HasKey("Id")
                         .HasName("pk_chats");
+
+                    b.HasIndex("OwnerId")
+                        .HasDatabaseName("ix_chats_owner_id");
 
                     b.ToTable("chats", (string)null);
                 });
@@ -234,6 +243,10 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("chat_id");
 
+                    b.Property<DateTime>("LastConnection")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("last_connection");
+
                     b.Property<int>("RoleId")
                         .HasColumnType("integer")
                         .HasColumnName("role_id");
@@ -303,6 +316,18 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_chat_group_groups_groups_id");
+                });
+
+            modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.Chat", b =>
+                {
+                    b.HasOne("VSTU.Digital.Messenger.Domain.Entities.User", "Owner")
+                        .WithMany("OwnedChats")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_chats_users_owner_id");
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.Message", b =>
@@ -387,6 +412,8 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
             modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.User", b =>
                 {
                     b.Navigation("Messages");
+
+                    b.Navigation("OwnedChats");
 
                     b.Navigation("UserChats");
                 });

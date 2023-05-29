@@ -3,4 +3,5 @@
 public record GetChatsResponseItem(
     int Id,
     string Name,
-    string Creator);
+    string Creator,
+    int NewMessagesCount);

@@ -1,17 +1,14 @@
 import {HubConnectionBuilder} from '@microsoft/signalr';
-import {API_URL, WS_URL} from "../../config";
-import AuthService from "./AuthService";
-
-
+import {API_URL, claims, WS_URL} from "../../config";
+import AuthService, {decodeToken} from "./AuthService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 class ChatService {
-    constructor() {
-        this.connection = null;
-    }
+    constructor() { this.connection = null; }
 
     initializeConnection() {
         this.connection = new HubConnectionBuilder()
-            .withUrl(`${WS_URL}/chatHub`)
+            .withUrl(WS_URL)
             .build();
     }
 
@@ -33,7 +30,25 @@ class ChatService {
         }
     }
 
-    unsubscribeFromIncomingMessages(){
+    unsubscribeFromIncomingMessages(chatId){
+        AsyncStorage.getItem('token').then((data) => {
+            const token = data;
+            decodeToken(data).then((x) => {
+                fetch(`${API_URL}/Chat/onDisconnected`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json, text/plain',
+                        'Content-Type': 'application/json;charset=UTF-8',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    mode: 'no-cors',
+                    body: JSON.stringify({
+                        chatId: chatId,
+                        userId: x[claims.id]
+                    })
+                })
+            })
+        })
         if (this.connection) {}
         this.connection.stop();
     }

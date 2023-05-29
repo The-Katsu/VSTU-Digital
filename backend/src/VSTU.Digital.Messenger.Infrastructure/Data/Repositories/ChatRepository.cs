@@ -10,6 +10,8 @@ public class ChatRepository : IChatRepository
 
     public ChatRepository(MessengerDbContext dbContext) => _dbContext = dbContext;
 
+    public DbSet<Chat> Chats() => _dbContext.Chats;
+
     public async Task<List<Chat>> GetListAsync() => await _dbContext.Chats.ToListAsync();
 
     public async Task<List<Chat>> GetChatsByGroup(string group) => await _dbContext

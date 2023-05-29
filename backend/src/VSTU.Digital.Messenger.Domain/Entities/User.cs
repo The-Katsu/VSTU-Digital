@@ -16,6 +16,7 @@ public class User
     
     // relations
     public virtual UserRole Role { get; set; } = null!;
+    public virtual ICollection<Chat> OwnedChats { get; set; } = new List<Chat>();
     public virtual Group Group { get; set; } = null!;
     public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
     public virtual ICollection<UserChat> UserChats { get; set; } = new List<UserChat>();

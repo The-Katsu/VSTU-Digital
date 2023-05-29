@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using VSTU.Digital.Messenger.Application.Chats.Commands.CreateRoom;
+using VSTU.Digital.Messenger.Application.Chats.Commands.CreateChat;
 using VSTU.Digital.Messenger.Application.Chats.Queries.GetChatsQuery;
+using VSTU.Digital.Messenger.Application.Users.Commands.DisconnectUser;
 using VSTU.Digital.Messenger.Presentation.Controllers.Base;
-using VSTU.Digital.Messenger.Presentation.Dtos;
 using VSTU.Digital.Messenger.Presentation.Hubs;
 
 namespace VSTU.Digital.Messenger.Presentation.Controllers;
@@ -20,56 +20,33 @@ public sealed class ChatController : ApiController
     {
         _hubContext = hubContext;
     }
-    
+
     /// <summary>
-    /// Создать групповой чат
+    /// Создание чата
     /// </summary>
-    /// <param name="dto"></param>
+    /// <param name="command"></param>
     /// <param name="ct"></param>
     /// <returns></returns>
     [HttpPost]
     [AllowAnonymous]
     [Route("create")]
-    [ProducesResponseType(typeof(CreateRoomChatResponse), 200)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> CreateRoom(CreateChatDto dto, CancellationToken ct)
+    public async Task<IActionResult> CreateChat(CreateChatCommand command, CancellationToken ct)
     {
-        var command = new CreateRoomChatCommand(dto.Name, dto.Groups, GetUserId());
         var result = await Sender.Send(command, ct);
         return result.Success ? Ok(result.Value) : BadRequest();
     }
-    
+
     /// <summary>
-    /// Редактировать групповой чат
+    /// 
     /// </summary>
-    /// <param name="dto"></param>
-    /// <param name="ct"></param>
+    /// <param name="command"></param>
     /// <returns></returns>
-    [HttpPut]
-    [AllowAnonymous]
-    [ProducesResponseType(400)]
-    [Route("edit")]
-    public async Task<IActionResult> EditRoom(CreateChatDto dto, CancellationToken ct)
+    [HttpPost]
+    [Route("onDisconnected")]
+    public async Task<IActionResult> OnDisconnected(DisconnectUserCommand command)
     {
-        var command = new CreateRoomChatCommand(dto.Name, dto.Groups, GetUserId());
-        var result = await Sender.Send(command, ct);
-        return result.Success ? Ok(result.Value) : BadRequest();
-    }
-    
-    /// <summary>
-    /// Удалить групповой чат
-    /// </summary>
-    /// <param name="dto"></param>
-    /// <param name="ct"></param>
-    /// <returns></returns>
-    [HttpDelete]
-    [AllowAnonymous]
-    [Route("delete")]
-    public async Task<IActionResult> DeleteRoom(CreateChatDto dto, CancellationToken ct)
-    {
-        var command = new CreateRoomChatCommand(dto.Name, dto.Groups, GetUserId());
-        var result = await Sender.Send(command, ct);
-        return result.Success ? Ok(result.Value) : BadRequest();
+        var result = await Sender.Send(command);
+        return result.Success ? Ok() : BadRequest();
     }
 
     /// <summary>
@@ -77,7 +54,7 @@ public sealed class ChatController : ApiController
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    [Route("getAll")]
+    [Route("get")]
     public async Task<IActionResult> GetChats()
     {
         var query = new GetChatsQuery(GetUserId());

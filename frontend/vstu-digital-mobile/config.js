@@ -7,8 +7,8 @@ import {
     REACT_APP_APP_ID,
     REACT_APP_MEASUREMENT_ID} from "@env";
 
-export const API_URL = 'https://6092-92-39-102-137.ngrok-free.app/api';
-export const WS_URL = 'https://6092-92-39-102-137.ngrok-free.app';
+export const API_URL = 'https://f2f2-92-39-102-137.ngrok-free.app/api';
+export const WS_URL = 'https://f2f2-92-39-102-137.ngrok-free.app/hub';
 
 export const firebaseConfig = {
     apiKey: REACT_APP_API_KEY,

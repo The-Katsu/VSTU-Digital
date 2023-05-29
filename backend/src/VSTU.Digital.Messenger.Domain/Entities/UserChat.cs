@@ -6,6 +6,7 @@ public class UserChat
     public int UserId { get; set; }
     public int ChatId { get; set; }
     public int RoleId { get; set; }
+    public DateTime LastConnection { get; set; } = DateTime.Now;
     
     // relations
     public virtual User User { get; set; } = null!;

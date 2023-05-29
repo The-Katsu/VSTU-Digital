@@ -1,6 +1,6 @@
-import {Button, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import React, {useEffect, useState} from "react";
-import ChatsService, {createChat} from "../services/ChatsService";
+import ChatsService, {createChat, getChats} from "../services/ChatsService";
 import appTheme from "../../theme";
 import {getGroups} from "../dal/firebase";
 import SelectDropdown from 'react-native-select-dropdown'
@@ -8,7 +8,6 @@ import {decodeToken} from "../services/AuthService";
 import {claims} from "../../config";
 
 function ChatsList({navigation}){
-    const chatService = new ChatsService();
     const [chats, setChats] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [chatName, setChatName] = useState('');
@@ -42,7 +41,8 @@ function ChatsList({navigation}){
     }
 
     const fetchChats = async () => {
-        const chats = await chatService.getChats();
+        const chats = await getChats();
+        console.log(chats)
         setChats(chats);
         setSelectedGroups([])
     };
@@ -93,7 +93,7 @@ function ChatsList({navigation}){
     )
 
     return(
-        <View >
+        <View>
             <Text>{'\n'}</Text>
             <FlatList
                 style={{height: '85%'}}
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         borderColor: appTheme.COLORS.secondary,
         borderBottomWidth: 2,
-
+        backgroundColor: appTheme.COLORS.white
     },
     chatContainer: {
         borderBottomWidth: 1,
@@ -200,6 +200,9 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 20,
         margin: 2,
+        marginTop: 8,
+        width: '90%',
+        marginLeft: '5%'
     },
     input: {
         borderColor: appTheme.COLORS.secondary,

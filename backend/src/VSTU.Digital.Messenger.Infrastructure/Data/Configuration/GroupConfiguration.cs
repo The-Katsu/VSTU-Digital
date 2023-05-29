@@ -10,5 +10,6 @@ public class GroupConfiguration: IEntityTypeConfiguration<Group>
     {
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Name).HasMaxLength(55);
+        
     }
 }
