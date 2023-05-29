@@ -10,9 +10,9 @@ public sealed class RoleRepository : IRoleRepository
 
     public RoleRepository(MessengerDbContext dbContext) => _dbContext = dbContext;
 
-    public async Task<Role> GetStudentRole() => 
+    public async Task<UserRole> GetStudentRole() => 
         await _dbContext.Roles.FirstAsync(x => x.Name == "Студент");
 
-    public async Task<Role> GetTeacherRole() => 
+    public async Task<UserRole> GetTeacherRole() => 
         await _dbContext.Roles.FirstAsync(x => x.Name == "Преподаватель");
 }

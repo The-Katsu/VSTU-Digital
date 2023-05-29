@@ -10,11 +10,11 @@ public class MessengerDbContext : DbContext
     public MessengerDbContext(DbContextOptions<MessengerDbContext> options) : base(options) => 
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-    public DbSet<Role> Roles { get; set; }
+    public DbSet<UserRole> Roles { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UserChat> UserChats { get; set; }
     public DbSet<Message> Messages { get; set; }
-    public DbSet<MessageContent> MessageContents { get; set; }
+    public DbSet<ChatRole> ChatRoles { get; set; }
     public DbSet<Chat> Chats { get; set; }
     public DbSet<Group> Groups { get; set; }
 
@@ -26,6 +26,7 @@ public class MessengerDbContext : DbContext
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new UserChatConfiguration());
         modelBuilder.ApplyConfiguration(new MessageConfiguration());
-        modelBuilder.ApplyConfiguration(new MessageContentConfiguration());
+        modelBuilder.ApplyConfiguration(new ChatRolesConfiguration());
+        modelBuilder.ApplyConfiguration(new ChatConfiguration());
     }
 }

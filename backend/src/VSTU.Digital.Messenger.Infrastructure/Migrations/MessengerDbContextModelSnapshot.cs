@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VSTU.Digital.Messenger.Infrastructure.Data.Contexts;
@@ -12,11 +11,9 @@ using VSTU.Digital.Messenger.Infrastructure.Data.Contexts;
 namespace VSTU.Digital.Messenger.Infrastructure.Migrations
 {
     [DbContext(typeof(MessengerDbContext))]
-    [Migration("20230520202843_groups")]
-    partial class groups
+    partial class MessengerDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,7 +23,26 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                 .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseSerialColumns(modelBuilder);
+
+            modelBuilder.Entity("ChatGroup", b =>
+                {
+                    b.Property<int>("ChatsId")
+                        .HasColumnType("integer")
+                        .HasColumnName("chats_id");
+
+                    b.Property<int>("GroupsId")
+                        .HasColumnType("integer")
+                        .HasColumnName("groups_id");
+
+                    b.HasKey("ChatsId", "GroupsId")
+                        .HasName("pk_chat_group");
+
+                    b.HasIndex("GroupsId")
+                        .HasDatabaseName("ix_chat_group_groups_id");
+
+                    b.ToTable("chat_group", (string)null);
+                });
 
             modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.Chat", b =>
                 {
@@ -35,11 +51,7 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsGroupChat")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_group_chat");
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -52,6 +64,64 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                     b.ToTable("chats", (string)null);
                 });
 
+            modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.ChatRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_chat_roles");
+
+                    b.ToTable("chat_roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Администратор"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Создатель"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Модератор"
+                        });
+                });
+
+            modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.Group", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_groups");
+
+                    b.ToTable("groups", (string)null);
+                });
+
             modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.Message", b =>
                 {
                     b.Property<int>("Id")
@@ -59,7 +129,7 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ChatId")
                         .HasColumnType("integer")
@@ -91,48 +161,103 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                     b.ToTable("messages", (string)null);
                 });
 
-            modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.MessageContent", b =>
+            modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ContentType")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
-                        .HasColumnName("content_type");
+                        .HasColumnName("first_name");
 
-                    b.Property<string>("ContentUrl")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("character varying(250)")
-                        .HasColumnName("content_url");
-
-                    b.Property<int>("MessageId")
+                    b.Property<int>("GroupId")
                         .HasColumnType("integer")
-                        .HasColumnName("message_id");
+                        .HasColumnName("group_id");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("last_name");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("password_hash");
+
+                    b.Property<string>("Patronymic")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("patronymic");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer")
+                        .HasColumnName("role_id");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("username");
 
                     b.HasKey("Id")
-                        .HasName("pk_message_contents");
+                        .HasName("pk_users");
 
-                    b.HasIndex("MessageId")
-                        .HasDatabaseName("ix_message_contents_message_id");
+                    b.HasIndex("GroupId")
+                        .HasDatabaseName("ix_users_group_id");
 
-                    b.ToTable("message_contents", (string)null);
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_users_role_id");
+
+                    b.HasIndex("Username")
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_username");
+
+                    b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.Role", b =>
+            modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.UserChat", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.Property<int>("ChatId")
+                        .HasColumnType("integer")
+                        .HasColumnName("chat_id");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer")
+                        .HasColumnName("role_id");
+
+                    b.HasKey("UserId", "ChatId")
+                        .HasName("pk_user_chats");
+
+                    b.HasIndex("ChatId")
+                        .HasDatabaseName("ix_user_chats_chat_id");
+
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_user_chats_role_id");
+
+                    b.ToTable("user_chats", (string)null);
+                });
+
+            modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.UserRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -163,85 +288,21 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.User", b =>
+            modelBuilder.Entity("ChatGroup", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("FirstName")
+                    b.HasOne("VSTU.Digital.Messenger.Domain.Entities.Chat", null)
+                        .WithMany()
+                        .HasForeignKey("ChatsId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("first_name");
+                        .HasConstraintName("fk_chat_group_chats_chats_id");
 
-                    b.Property<string>("GroupName")
+                    b.HasOne("VSTU.Digital.Messenger.Domain.Entities.Group", null)
+                        .WithMany()
+                        .HasForeignKey("GroupsId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("group_name");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("last_name");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("password");
-
-                    b.Property<string>("Patronymic")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("patronymic");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("integer")
-                        .HasColumnName("role_id");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("username");
-
-                    b.HasKey("Id")
-                        .HasName("pk_users");
-
-                    b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_users_role_id");
-
-                    b.HasIndex("Username")
-                        .IsUnique()
-                        .HasDatabaseName("ix_users_username");
-
-                    b.ToTable("users", (string)null);
-                });
-
-            modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.UserChat", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
-                        .HasColumnName("user_id");
-
-                    b.Property<int>("ChatId")
-                        .HasColumnType("integer")
-                        .HasColumnName("chat_id");
-
-                    b.HasKey("UserId", "ChatId")
-                        .HasName("pk_user_chats");
-
-                    b.HasIndex("ChatId")
-                        .HasDatabaseName("ix_user_chats_chat_id");
-
-                    b.ToTable("user_chats", (string)null);
+                        .HasConstraintName("fk_chat_group_groups_groups_id");
                 });
 
             modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.Message", b =>
@@ -265,26 +326,23 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.MessageContent", b =>
-                {
-                    b.HasOne("VSTU.Digital.Messenger.Domain.Entities.Message", "Message")
-                        .WithMany("Content")
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_message_contents_messages_message_id");
-
-                    b.Navigation("Message");
-                });
-
             modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.User", b =>
                 {
-                    b.HasOne("VSTU.Digital.Messenger.Domain.Entities.Role", "Role")
+                    b.HasOne("VSTU.Digital.Messenger.Domain.Entities.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_users_groups_group_id");
+
+                    b.HasOne("VSTU.Digital.Messenger.Domain.Entities.UserRole", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_users_roles_role_id");
+
+                    b.Navigation("Group");
 
                     b.Navigation("Role");
                 });
@@ -298,6 +356,13 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_user_chats_chats_chat_id");
 
+                    b.HasOne("VSTU.Digital.Messenger.Domain.Entities.ChatRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_chats_chat_roles_role_id");
+
                     b.HasOne("VSTU.Digital.Messenger.Domain.Entities.User", "User")
                         .WithMany("UserChats")
                         .HasForeignKey("UserId")
@@ -306,6 +371,8 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                         .HasConstraintName("fk_user_chats_users_user_id");
 
                     b.Navigation("Chat");
+
+                    b.Navigation("Role");
 
                     b.Navigation("User");
                 });
@@ -317,21 +384,16 @@ namespace VSTU.Digital.Messenger.Infrastructure.Migrations
                     b.Navigation("UserChats");
                 });
 
-            modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.Message", b =>
-                {
-                    b.Navigation("Content");
-                });
-
-            modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.Role", b =>
-                {
-                    b.Navigation("Users");
-                });
-
             modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.User", b =>
                 {
                     b.Navigation("Messages");
 
                     b.Navigation("UserChats");
+                });
+
+            modelBuilder.Entity("VSTU.Digital.Messenger.Domain.Entities.UserRole", b =>
+                {
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

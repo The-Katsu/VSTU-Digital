@@ -3,16 +3,20 @@
 public class User
 {
     public int Id { get; set; }
-    public string Username { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string Patronymic { get; set; }
-    public string GroupName { get; set; }
-    public string Password { get; set; }
+    public string Username { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string Patronymic { get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
+    
+    // foreign keys
     public int RoleId { get; set; }
+    public int GroupId { get; set; }
 
-    public virtual Role Role { get; set; }
-    public virtual ICollection<Chat> ChatsCreated { get; set; }
-    public virtual ICollection<Message> Messages { get; set; }
-    public virtual ICollection<UserChat> UserChats { get; set; }
+    
+    // relations
+    public virtual UserRole Role { get; set; } = null!;
+    public virtual Group Group { get; set; } = null!;
+    public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
+    public virtual ICollection<UserChat> UserChats { get; set; } = new List<UserChat>();
 }

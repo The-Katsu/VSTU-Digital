@@ -25,17 +25,7 @@ builder.Services.AddCors(o =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "VSTU listener, communication module - V1",
-        Version = "v1"
-    });
-
-    var filePath = Path.Combine(AppContext.BaseDirectory, "VSTU.Digital.Messenger.Api.xml");
-    c.IncludeXmlComments(filePath, includeControllerXmlComments: true);
-});
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -52,6 +42,6 @@ app.UseAuthorization();
 app.UseCors("AllowAnyOrigin");
 
 app.MapControllers();
-app.MapHub<ChatHub>("/chatHub");
+app.MapHub<ChatHub>("/hub");
 
 app.Run();

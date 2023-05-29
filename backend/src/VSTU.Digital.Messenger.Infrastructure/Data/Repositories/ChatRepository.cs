@@ -19,8 +19,7 @@ public class ChatRepository : IChatRepository
 
     public async Task<List<Chat>> GetTeacherChats(int id) => await _dbContext
         .Chats
-        .Where(x => x.Creator.Id == id)
-        .Include(x => x.Creator)
+        //.Where(x => x.Creator.Id == id)
         .ToListAsync();
 
     public async Task<List<Chat>> GetStudentChats(string group) => await _dbContext
@@ -29,6 +28,5 @@ public class ChatRepository : IChatRepository
             .Groups
             .Select(g => g.Name)
             .Contains(group))
-        .Include(x => x.Creator)
         .ToListAsync();
 }

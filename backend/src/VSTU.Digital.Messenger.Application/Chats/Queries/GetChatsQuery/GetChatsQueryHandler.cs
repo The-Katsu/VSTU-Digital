@@ -26,14 +26,15 @@ public class GetChatsQueryHandler : IQueryHandler<GetChatsQuery, List<GetChatsRe
             chats = await _chatRepository.GetTeacherChats(user.Id);
         else
         {
-            chats = await _chatRepository.GetStudentChats(user.GroupName);
+            //chats = await _chatRepository.GetStudentChats(user.GroupName);
         }
         
         var chatsResponse = chats
             .Select(x => new GetChatsResponseItem(
                 x.Id,
                 x.Name,
-                $"{x.Creator.LastName} {x.Creator.FirstName.First()}.{x.Creator.Patronymic.First()}."))
+                ""
+                /*$"{x.Creator.LastName} {x.Creator.FirstName.First()}.{x.Creator.Patronymic.First()}."*/))
             .ToList();
         return Result.Ok(chatsResponse);
     }

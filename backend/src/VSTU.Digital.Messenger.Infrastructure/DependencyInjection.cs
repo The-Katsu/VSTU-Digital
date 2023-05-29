@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using VSTU.Digital.Messenger.Infrastructure.Authentication.Jwt;
 using VSTU.Digital.Messenger.Infrastructure.Data;
 using VSTU.Digital.Messenger.Infrastructure.Data.Contexts;
@@ -16,10 +17,14 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<MessengerDbContext>(options =>
+        {
+            var builder = new NpgsqlDbContextOptionsBuilder(options);
+            builder.SetPostgresVersion(new Version(9, 6));
             options
                 .UseLazyLoadingProxies()
                 .UseNpgsql(configuration.GetConnectionString("NpgsqlConnection"))
-                .UseSnakeCaseNamingConvention());
+                .UseSnakeCaseNamingConvention();
+        });
 
         services.AddAuthentication(options =>
             {

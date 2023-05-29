@@ -28,13 +28,13 @@ public sealed class LoginUserQueryHandler : IQueryHandler<LoginUserQuery, LoginU
         if (user is null)
             return Result.Fail<LoginUserResponse>($"Пользователя с логином '{request.Username}' не существует.");
 
-        var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
+        var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
         
         if (!isPasswordCorrect)
             return Result.Fail<LoginUserResponse>($"Указан неверный пароль");
 
         var token = _jwtService.GenerateToken(user);
-        var userDto = new UserDto(user.Username, user.FirstName, user.LastName, user.Patronymic, user.GroupName);
+        var userDto = new UserDto(user.Username, user.FirstName, user.LastName, user.Patronymic, "");
         
         return Result.Ok(new LoginUserResponse(token, userDto));
     }

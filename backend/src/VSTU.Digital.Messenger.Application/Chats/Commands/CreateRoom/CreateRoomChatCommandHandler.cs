@@ -49,15 +49,14 @@ public sealed class CreateRoomChatCommandHandler : ICommandHandler<CreateRoomCha
         var chat = new Chat
         {
             Name = request.Name,
-            IsGroupChat = true,
-            Groups = groups,
-            Creator = creator!
+            Groups = groups
         };
         await _unitOfWork.AddAsync(chat, cancellationToken);
         await _unitOfWork.SaveAsync(cancellationToken);
         return Result.Ok(new CreateRoomChatResponse(
             chat.Id, 
             chat.Name,
-            $"{chat.Creator.LastName} {chat.Creator.FirstName.First()}.{chat.Creator.Patronymic.First()}."));
+            ""
+            /*$"{chat.Creator.LastName} {chat.Creator.FirstName.First()}.{chat.Creator.Patronymic.First()}."*/));
     }
 }

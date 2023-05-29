@@ -25,7 +25,6 @@ public class JwtService : IJwtService
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.Username),
             new(ClaimTypes.Role, user.Role.Name),
-            new(ClaimTypes.GroupSid, user.GroupName),
         };
 
         var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256);
