@@ -12,16 +12,6 @@ public class GetChatsQueryHandler : IQueryHandler<GetChatsQuery, List<GetChatsRe
 
     public GetChatsQueryHandler(MessengerDbContext dbContext) => _dbContext = dbContext;
 
-    private static string GetOwnerFio(User user) => $"{user.LastName} {user.FirstName}. {user.Patronymic}.";
-    private User GetOwner(int chatId) => _dbContext
-        .UserChats
-        .Where(x => 
-            x.ChatId == chatId || 
-            x.RoleId == 1)
-        .Select(x => x.User)
-        .FirstOrDefault()!;
-    
-    
     public async Task<Result<List<GetChatsResponseItem>>> Handle(
         GetChatsQuery request, 
         CancellationToken cancellationToken)
@@ -36,7 +26,7 @@ public class GetChatsQueryHandler : IQueryHandler<GetChatsQuery, List<GetChatsRe
         var chats = user!.RoleId == 3 ? 
             await _dbContext
                 .Chats
-                .Where(x => x.Groups.Any(x => x.Name == user.Group.Name))
+                .Where(x => x.Groups.Any(g => g.Name == user.Group.Name))
                 .ToListAsync(cancellationToken)
             :
             await _dbContext
@@ -52,8 +42,11 @@ public class GetChatsQueryHandler : IQueryHandler<GetChatsQuery, List<GetChatsRe
             
             var chatRef = await _dbContext
                 .UserChats
-                .SingleOrDefaultAsync(x => x.ChatId == chat.Id &&
-                            x.UserId == chat.OwnerId);
+                .SingleOrDefaultAsync(x => 
+                        x.ChatId == chat.Id &&
+                        x.UserId == chat.OwnerId, 
+                        cancellationToken: cancellationToken);
+            
             var msgCount = chat
                 .Messages
                 .Count(x => 

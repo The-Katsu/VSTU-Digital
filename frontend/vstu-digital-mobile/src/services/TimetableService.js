@@ -43,6 +43,8 @@ export const getTeacherTimetable = async (date, name) => {
         }
     });
 
+    console.log(result)
+
     return result.sort((a, b) => {
         const timeA = Number(a.time.split(':')[0]);
         const timeB = Number(b.time.split(':')[0]);

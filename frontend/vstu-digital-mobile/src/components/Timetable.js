@@ -25,7 +25,6 @@ function Timetable(){
     const [name, setName] = useState('')
 
     const handleDateChange = (date) => {
-        console.log(date)
         setSelectedDate(date.format('YYYY-MM-DD'));
         setIsCalendarVisible(false);
 
@@ -111,7 +110,7 @@ function Timetable(){
         <FlatList
             data={timetable}
             renderItem={renderTimetable}
-            keyExtractor={(item) => item.id}
+            keyExtractor={item => item.id}
         />
     </View>);
 }
