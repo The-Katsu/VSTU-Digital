@@ -1,8 +1,10 @@
-import {API_URL} from "../../config";
+import {API_URL, claims} from "../../config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {decodeToken} from "./AuthService";
 
 export const createChat = async (name, groups) => {
     const token = await AsyncStorage.getItem('token');
+    const decodedToken = await decodeToken();
     const response = await fetch(`${API_URL}/Chat/create`, {
         method: 'POST',
         headers: {
@@ -10,7 +12,8 @@ export const createChat = async (name, groups) => {
             Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-            name: name,
+            creatorId: decodedToken[claims.id],
+            chatName: name,
             groups: groups
         }),
     });
@@ -18,6 +21,7 @@ export const createChat = async (name, groups) => {
     if (response.ok) {
         return await response.json();
     } else {
+        console.log(await response.json())
         throw new Error('error creating chat')
     }
 }

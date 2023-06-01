@@ -1,3 +1,5 @@
-﻿namespace VSTU.Digital.Messenger.Application.Users.Queries.GetUserProfile;
+﻿using VSTU.Digital.Messenger.Application.Abstractions.Messaging;
 
-public record GetUserQuery();
+namespace VSTU.Digital.Messenger.Application.Users.Queries.GetUserProfile;
+
+public record GetUserQuery(int Id) : IQuery<GetUserQueryResponse>;

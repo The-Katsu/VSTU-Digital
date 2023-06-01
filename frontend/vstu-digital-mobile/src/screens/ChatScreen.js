@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
     View,
     Text,
@@ -7,35 +7,41 @@ import {
     TouchableOpacity,
     ScrollView,
     KeyboardAvoidingView,
-    Platform, SafeAreaView
+    SafeAreaView
 } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/elements'
 import ChatService from '../services/ChatService';
 import appTheme from "../../theme";
 import {decodeToken} from "../services/AuthService";
 import {claims} from "../../config";
+import * as Device from "expo-device";
+import {getMessages} from "../services/MessageService";
+
 
 const ChatScreen = ({ route }) => {
     const height = useHeaderHeight();
-    const [messages, setMessages] = useState([
-        { text: "Здравствуйте", name: "Студент0 И.О.", time: "27/05/2023 12:12:02" },
-        { text: "Когда пара ?", name: "Стдуент1 И.О.", time: "27/05/2023 12:17:23" },
-        { text: "Коллеги, встречаемся в 14:00 в В-1401", name: "Учитель И.О.", time: "27/05/2023 12:19:51" },
-    ]);
-    const [inputMessage, setInputMessage] = useState('privet');
+    const [messages, setMessages] = useState([]);
+    const [inputMessage, setInputMessage] = useState('');
     const [chatService, setChatService] = useState(null);
     const [chatId, setChatId] = useState(0);
     const [userId, setUserId] = useState(0);
+    const [sendable, setSendable] = useState(false)
+    const scrollViewRef = useRef();
+    const behavior = Device.deviceName === 'iPhone' ? 'padding' : 'height';
+
 
     useEffect(() => {
-        decodeToken().then((data) => {
-            setUserId(data[claims.id])
-        })
         const initializeConnection = async () => {
+            const tokenInfo = await decodeToken();
+            setUserId(Number.parseInt(tokenInfo[claims.id]));
+            console.log(`token id is ${userId}`)
             const service = new ChatService();
             await service.initializeConnection();
             const id  = route.params.chatId;
             setChatId(id);
+            const m = await getMessages(id);
+            console.log(m)
+            setMessages(m);
             await service.startConnection(id);
             setChatService(service);
         };
@@ -66,11 +72,16 @@ const ChatScreen = ({ route }) => {
         try {
             await chatService?.sendMessageToAPI(chatId, inputMessage);
             setInputMessage('');
+            setSendable(false)
         } catch (error) {
             console.log('Error sending message to API:', error);
 
         }
     };
+
+    const getSendable = () => {
+        return sendable
+    }
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: appTheme.COLORS.white }}>
@@ -82,39 +93,49 @@ const ChatScreen = ({ route }) => {
             <ScrollView
                 style={styles.messages}
                 contentContainerStyle={{ flexGrow: 1 }}
+                ref={scrollViewRef}
+                onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
             >
                 {messages.map((message, index) => (
-                    message.senderId == userId ?
+                    message.senderId === userId ?
                         <View>
                             <View style={styles.messageBlock2} key={index}>
                                 <Text style={styles.messageText}>{message.text}</Text>
-                                <Text style={styles.messageSender}>{'Авилов В.С.'}</Text>
+                                <Text style={styles.messageSender}>{message.senderName}</Text>
                                 <Text style={styles.messageTime}>{message.time}</Text>
                             </View>
                         </View> :
                     <View style={styles.messageBlock} key={index}>
                         <Text style={styles.messageText}>{message.text}</Text>
-                        <Text style={styles.messageSender}>{message.name}</Text>
+                        <Text style={styles.messageSender}>{message.senderName}</Text>
                         <Text style={styles.messageTime}>{message.time}</Text>
                     </View>
                 ))}
             </ScrollView>
             <KeyboardAvoidingView
                 keyboardVerticalOffset={height + 37}
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                behavior={behavior}
                 style={styles.keyboardAvoidingContainer}
             >
                 <TextInput
                     style={styles.messageInput}
                     value={inputMessage}
-                    onChangeText={setInputMessage}
+                    onChangeText={(text) => {
+                        setInputMessage(text)
+                        if (text !== '') {
+                            setSendable(true)
+                        } else {
+                            setSendable(false)
+                        }
+                    }}
                 />
                 <TouchableOpacity
-                    style={styles.sentBtn}
+                    style={getSendable() ? styles.sentBtn : styles.disabledBtn}
                     onPress={handleSendMessage}
+                    disabled={!sendable}
                 >
                     <Text
-                    style={styles.sentText}
+                    style={ styles.sentText}
                     >Отправить</Text>
                 </TouchableOpacity>
             </KeyboardAvoidingView>
@@ -156,6 +177,12 @@ export const styles = StyleSheet.create({
         borderRadius: 20,
         borderColor: appTheme.COLORS.primary,
         backgroundColor: appTheme.COLORS.primary
+    },
+    disabledBtn:{
+        borderWidth: 1,
+        borderRadius: 20,
+        borderColor: appTheme.COLORS.secondary,
+        backgroundColor: appTheme.COLORS.secondary
     },
     sentText: {
         fontSize: 20,

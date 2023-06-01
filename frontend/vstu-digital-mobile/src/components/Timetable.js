@@ -8,6 +8,7 @@ import {claims, firebaseConfig} from '../../config';
 import TimetableAlert from "./TimetableAlert";
 import {decodeToken} from "../services/AuthService";
 import {getStudentTimetable, getTeacherTimetable} from "../services/TimetableService";
+import {v4 as uuidv4} from 'uuid';
 
 function Timetable(){
     const currentDate = new Date();
@@ -20,9 +21,10 @@ function Timetable(){
     const [timetable, setTimetable] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const app = firebase.initializeApp(firebaseConfig)
-
+    const [id, setId] = useState(1)
     const [group, setGroup] = useState('')
     const [name, setName] = useState('')
+    const [item ,setItem] = useState({})
 
     const handleDateChange = (date) => {
         setSelectedDate(date.format('YYYY-MM-DD'));
@@ -47,30 +49,36 @@ function Timetable(){
 
 
     const renderTimetable = ({item}) => (
-        <TouchableOpacity style={styles.timetableBtn} onPress={() => setShowModal(true)}>
-            <Grid>
-                <Col size={1}>
-                    <Text style={[styles.timetableItem, {marginTop: '15%', marginLeft: '20%'}]}>{item.time}</Text>
-                </Col>
-                <Col size={2}>
-                    <Row>
-                        <Text style={styles.timetableItem}>{item.type}</Text>
-                    </Row>
-                    <Row>
-                        <Text style={styles.timetableItem}>{item.teacher}</Text>
-                    </Row>
-                    <Row>
-                        <Text style={styles.timetableItem}>{item.room}</Text>
-                    </Row>
-                </Col>
-            </Grid>
+        <TouchableOpacity style={styles.timetableBtn} onPress={() => {
+            setItem(item)
+            setShowModal(true)
+        }}>
+            <View>
+                <Grid>
+                    <Col size={1}>
+                        <Text style={[styles.timetableItem, {marginTop: '15%', marginLeft: '20%'}]}>{item.time}</Text>
+                    </Col>
+                    <Col size={2}>
+                        <Row>
+                            <Text style={styles.timetableItem}>{item.type}</Text>
+                        </Row>
+                        <Row>
+                            <Text style={styles.timetableItem}>{item.teacher}</Text>
+                        </Row>
+                        <Row>
+                            <Text style={styles.timetableItem}>{item.room}</Text>
+                        </Row>
+                    </Col>
+                </Grid>
+            </View>
+
         </TouchableOpacity>
     );
 
 
     return(<View>
         <Text style={styles.label}>Выбранная дата: {selectedDate}</Text>
-        <TimetableAlert visible={showModal} onClose={() => setShowModal(false)}/>
+        <TimetableAlert item={item} visible={showModal} onClose={() => setShowModal(false)}/>
         {isCalendarVisible && (
             <CalendarPicker
                 onDateChange={(date) => handleDateChange(date)}
@@ -110,7 +118,6 @@ function Timetable(){
         <FlatList
             data={timetable}
             renderItem={renderTimetable}
-            keyExtractor={item => item.id}
         />
     </View>);
 }

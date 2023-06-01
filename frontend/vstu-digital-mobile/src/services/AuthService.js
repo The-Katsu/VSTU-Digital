@@ -2,6 +2,22 @@ import { API_URL } from '../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
 
+export const getProfile = async () => {
+    const token = await AsyncStorage.getItem('token')
+    const response = await fetch(`${API_URL}/Account/getProfile`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+
+    if (response.ok) {
+        return await response.json()
+    } else {
+        return { }
+    }
+}
+
 export const verifyToken = async () => {
     const token = await AsyncStorage.getItem('token');
     const response = await fetch(`${API_URL}/Account/isAuthenticated`, {
@@ -33,15 +49,13 @@ export const signIn = async (username, password) => {
         })
     })
 
-    if (response.status === 400) {
-        const error = await response.text();
-        throw new Error(error)
-    }
-
     if (response.ok) {
         const data = await response.json();
         const token = data.token;
         await AsyncStorage.setItem('token', token);
+    } else {
+        const error = await response.text();
+        throw new Error(error)
     }
 }
 

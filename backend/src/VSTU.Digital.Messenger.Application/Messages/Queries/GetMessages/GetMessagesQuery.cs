@@ -2,4 +2,4 @@
 
 namespace VSTU.Digital.Messenger.Application.Messages.Queries.GetMessages;
 
-public record GetMessagesQuery(int Id) : IQuery<List<GetMessagesQueryResponse>>, IQuery<GetMessagesQueryResponse>;
+public record GetMessagesQuery(int Id) : IQuery<List<GetMessagesQueryResponse>>;

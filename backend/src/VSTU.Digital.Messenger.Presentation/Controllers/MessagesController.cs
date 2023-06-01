@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using VSTU.Digital.Messenger.Application.Messages.Commands.CreateMessage;
+using VSTU.Digital.Messenger.Application.Messages.Queries.GetMessages;
 using VSTU.Digital.Messenger.Presentation.Controllers.Base;
 using VSTU.Digital.Messenger.Presentation.Dtos;
 using VSTU.Digital.Messenger.Presentation.Hubs;
@@ -33,5 +34,13 @@ public class MessagesController : ApiController
             .SendAsync("Send", result.Value);
 
         return Ok();
+    }
+
+    [HttpGet]
+    [Route("{id:int}")]
+    public async Task<IActionResult> GetMessages(int id)
+    {
+        var result = await Sender.Send(new GetMessagesQuery(id));
+        return Ok(result.Value);
     }
 }

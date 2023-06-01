@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, Button} from 'react-native';
 import Toggle  from "react-native-toggle-element";
 import appTheme from "../../theme";
 import ChatsList from "../components/ChatsList";
 import Timetable from "../components/Timetable";
+import {useIsFocused} from "@react-navigation/native";
 
 const ChatsScreen = ({ navigation }) => {
 
     const [toggleValue, setToggleValue] = useState(false);
+
+    const isFocused = useIsFocused();
+
 
     const colorStyles = (value) => value ?
         {color: appTheme.COLORS.white}
@@ -29,6 +33,8 @@ const ChatsScreen = ({ navigation }) => {
       navigation.navigate('Profile');
     };
 
+
+    if (!isFocused) return ;
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.row}>
@@ -65,13 +71,9 @@ const ChatsScreen = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
 
-
-
             {
                 toggleValue === false ?
-                    <ChatsList
-                        navigation={navigation}
-                    />
+                    <ChatsList navigation={navigation} />
                     :
                     <Timetable
                         ItemSeparator={ItemSeparator}

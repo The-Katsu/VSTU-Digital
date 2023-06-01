@@ -3,4 +3,4 @@
 public record CreateChatCommandResponse(
     int Id,
     string Name,
-    string Owner);
+    string Creator);

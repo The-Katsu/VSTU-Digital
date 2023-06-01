@@ -1,9 +1,24 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, TextInput} from 'react-native';
 import appTheme from "../../theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {getProfile} from "../services/AuthService";
 
 const UserProfileScreen = ({navigation}) => {
+
+    const [profile, setProfile] = useState({
+        login: '',
+        surname: '',
+        name: '',
+        patronymic: '',
+        group: 'none'
+    })
+
+    useEffect(() => {
+        getProfile().then((data) => {
+            setProfile(data)
+        })
+    }, [])
 
     const handleLogout = async () => {
         await AsyncStorage.removeItem('token');
@@ -14,16 +29,22 @@ const UserProfileScreen = ({navigation}) => {
         <View style={styles.container}>
             <View style={styles.userForm}>
                 <Text style={styles.userInfoLabel}>Логин</Text>
-                <TextInput style={styles.userInfo} editable={false}>{'vladimir'}</TextInput>
+                <TextInput style={styles.userInfo} editable={false}>{profile.login}</TextInput>
                 <Text style={styles.userInfoLabel}>Фамилия</Text>
-                <TextInput style={styles.userInfo} editable={false}>{'Авилов'}</TextInput>
+                <TextInput style={styles.userInfo} editable={false}>{profile.surname}</TextInput>
                 <Text style={styles.userInfoLabel}>Имя</Text>
-                <TextInput style={styles.userInfo} editable={false}>{'Владимир'}</TextInput>
-
+                <TextInput style={styles.userInfo} editable={false}>{profile.name}</TextInput>
                 <Text style={styles.userInfoLabel}>Отчество</Text>
-                <TextInput style={styles.userInfo} editable={false}>{'Сергеевич'}</TextInput>
-                <Text style={styles.userInfoLabel}>Группа</Text>
-                <TextInput style={styles.userInfo} editable={false}>{'ППЦ-3'}</TextInput>
+                <TextInput style={styles.userInfo} editable={false}>{profile.patronymic}</TextInput>
+                {
+                    profile.group === 'none' ?
+                        null
+                        :
+                        <View>
+                            <Text style={styles.userInfoLabel}>Группа</Text>
+                            <TextInput style={styles.userInfo} editable={false}>{profile.group}</TextInput>
+                        </View>
+                }
             </View>
 
 

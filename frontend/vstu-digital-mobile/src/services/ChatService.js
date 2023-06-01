@@ -46,7 +46,7 @@ class ChatService {
                         chatId: chatId,
                         userId: x[claims.id]
                     })
-                })
+                }).then()
             })
         })
         if (this.connection) {}

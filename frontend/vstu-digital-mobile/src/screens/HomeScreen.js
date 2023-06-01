@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, Text, Button, Image} from 'react-native';
+import {View, Text, Image} from 'react-native';
 import appTheme from "../../theme";
 import {verifyToken} from "../services/AuthService";
 

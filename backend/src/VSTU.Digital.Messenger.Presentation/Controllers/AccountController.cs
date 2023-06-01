@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VSTU.Digital.Messenger.Application.Tokens.Commands;
+using VSTU.Digital.Messenger.Application.Users.Queries.GetUserProfile;
 using VSTU.Digital.Messenger.Application.Users.Queries.LoginQuery;
 using VSTU.Digital.Messenger.Presentation.Controllers.Base;
 
@@ -43,5 +44,14 @@ public class AccountController : ApiController
         var command = new VerifyTokenCommand(token);
         var result = await Sender.Send(command);
         return result.Success ? Ok() : BadRequest(result.Error); 
+    }
+
+    [HttpGet]
+    [Authorize]
+    [Route("getProfile")]
+    public async Task<IActionResult> GetProfile()
+    {
+        var result = await Sender.Send(new GetUserQuery(GetUserId()));
+        return Ok(result.Value);
     }
 }

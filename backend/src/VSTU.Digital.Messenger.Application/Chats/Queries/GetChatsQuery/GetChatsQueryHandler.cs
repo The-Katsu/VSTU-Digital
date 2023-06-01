@@ -18,10 +18,7 @@ public class GetChatsQueryHandler : IQueryHandler<GetChatsQuery, List<GetChatsRe
     {
         var user = await _dbContext
             .Users
-            .Include(x => x.Group)
-            .SingleOrDefaultAsync(
-                x => x.Id == request.UserId, 
-                cancellationToken: cancellationToken);
+            .SingleAsync(x => x.Id == request.UserId, cancellationToken);
 
         var chats = user!.RoleId == 3 ? 
             await _dbContext
@@ -44,13 +41,12 @@ public class GetChatsQueryHandler : IQueryHandler<GetChatsQuery, List<GetChatsRe
                 .UserChats
                 .SingleOrDefaultAsync(x => 
                         x.ChatId == chat.Id &&
-                        x.UserId == chat.OwnerId, 
-                        cancellationToken: cancellationToken);
+                        x.UserId == user.Id, 
+                        cancellationToken);
             
             var msgCount = chat
                 .Messages
-                .Count(x => 
-                    x.Timestamp > chatRef!.LastConnection);
+                .Count(x => x.Timestamp > chatRef!.LastConnection);
 
             response.Add(new GetChatsResponseItem(
                 chat.Id,

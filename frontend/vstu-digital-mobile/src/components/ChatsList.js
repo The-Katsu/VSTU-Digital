@@ -1,6 +1,6 @@
 import {FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import React, {useEffect, useState} from "react";
-import ChatsService, {createChat, getChats} from "../services/ChatsService";
+import {createChat, getChats} from "../services/ChatsService";
 import appTheme from "../../theme";
 import {getGroups} from "../dal/firebase";
 import SelectDropdown from 'react-native-select-dropdown'
@@ -15,7 +15,9 @@ function ChatsList({navigation}){
     const [selectedGroups, setSelectedGroups] = useState([]);
     const [decodedToken, setDecodedToken] = useState({})
 
+
     useEffect(() => {
+
         fetchChats().then();
         decodeToken().then((data) => {
             setDecodedToken(data)
@@ -25,6 +27,7 @@ function ChatsList({navigation}){
     const handleCreateChat = () => {
         createChat(chatName, selectedGroups)
             .then((data) => {
+                console.log(data)
                 setChats([...chats, data]);
                 setIsModalVisible(false);
             })
@@ -61,7 +64,23 @@ function ChatsList({navigation}){
 
     const renderChat = ({ item }) => (
         <TouchableOpacity style={styles.chatContainer} onPress={() => navigateToChatScreen(item.id)}>
-            <Text style={styles.chatName}>{item.name}</Text>
+            <View>
+                <Text style={styles.chatName}>{item.name} {'\t'} {
+                    item.newMessagesCount === 0 ?
+                        null
+                        :
+                        <View style={{backgroundColor: appTheme.COLORS.primary, borderRadius: 20}}>
+                            <Text style={{
+                                color: appTheme.COLORS.white,
+                                fontSize: 16
+                            }}>
+                                {' '}{item.newMessagesCount}{' '}
+                            </Text>
+                        </View>
+
+                }</Text>
+            </View>
+
             <Text style={styles.chatCreatorName}>{item.creator}</Text>
         </TouchableOpacity>
     );

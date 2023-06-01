@@ -3,5 +3,5 @@
 public record GetMessagesQueryResponse(
     string Text, 
     string SenderName,
-    string SenderId,
+    int SenderId,
     string Time);

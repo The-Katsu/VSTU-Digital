@@ -18,6 +18,9 @@ public class CreateMessageCommandHandler : ICommandHandler<CreateMessageCommand,
         _unitOfWork = unitOfWork;
         _messageRepository = messageRepository;
     }
+    
+    private string ToFio(string surname, string name, string patronymic) =>
+        $"{surname} {name.First()}. {patronymic.First()}.";
 
     public async Task<Result<CreateMessageResponse>> Handle(
         CreateMessageCommand request, 
@@ -38,7 +41,7 @@ public class CreateMessageCommandHandler : ICommandHandler<CreateMessageCommand,
 
         var response = new CreateMessageResponse(
             message.Text, 
-            message.Sender.Username,
+            ToFio(message.Sender.LastName, message.Sender.FirstName, message.Sender.Patronymic),
             message.Sender.Id,
             message.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"));
 
