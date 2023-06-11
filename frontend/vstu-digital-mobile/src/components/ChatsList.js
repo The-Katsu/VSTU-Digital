@@ -1,11 +1,13 @@
 import {FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import React, {useEffect, useState} from "react";
-import {createChat, getChats} from "../services/ChatsService";
+import {createChat, getChat, getChats} from "../services/ChatsService";
 import appTheme from "../../theme";
 import {getGroups} from "../dal/firebase";
 import SelectDropdown from 'react-native-select-dropdown'
 import {decodeToken} from "../services/AuthService";
 import {claims} from "../../config";
+import ChatEditorModal from "./ChatEditorModal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function ChatsList({navigation}){
     const [chats, setChats] = useState([]);
@@ -14,7 +16,9 @@ function ChatsList({navigation}){
     const [groups, setGroups] = useState([]);
     const [selectedGroups, setSelectedGroups] = useState([]);
     const [decodedToken, setDecodedToken] = useState({})
-
+    const [isEditorModalVisible, setEditorModalVisible] = useState(false)
+    const [chat, setChat] = useState({ id: 0, name: '', groups: [] })
+    const [chatId, setChatId] = useState(0)
 
     useEffect(() => {
 
@@ -56,17 +60,40 @@ function ChatsList({navigation}){
         setChatName('');
     }
 
+    const openEditorModal = (id) => {
+        getChat(id)
+            .then((data) => {
+                setChat(data)
+                setEditorModalVisible(true)
+            })
 
+    }
+
+    const cancelEditorModal = () => {
+        setEditorModalVisible(false)
+    }
 
     const navigateToChatScreen = (chatId) => {
         navigation.navigate('Chat', { chatId });
     };
 
     const renderChat = ({ item }) => (
-        <TouchableOpacity style={styles.chatContainer} onPress={() => navigateToChatScreen(item.id)}>
+        <TouchableOpacity
+            style={styles.chatContainer}
+            onLongPress={() => {
+                decodeToken().then((data) => {
+                    console.log(data['FIO'])
+                    console.log(item.creator)
+                    console.log(data['FIO'] === item.creator)
+                    if (data['FIO'] === item.creator) {
+                        openEditorModal(item.id)
+                    }
+                })
+            }}
+            onPress={() => navigateToChatScreen(item.id)}>
             <View>
                 <Text style={styles.chatName}>{item.name} {'\t'} {
-                    item.newMessagesCount === 0 ?
+                    item.newMessagesCount === 0 || item.newMessagesCount === undefined ?
                         null
                         :
                         <View style={{backgroundColor: appTheme.COLORS.primary, borderRadius: 20}}>
@@ -100,6 +127,10 @@ function ChatsList({navigation}){
         setGroups(temp);
     }
 
+    const longClick = () => {
+        console.log('hello world')
+    }
+
     const renderSelectedGroups = ({item}) => (
         <View style={styles.row}>
             <Text style={styles.selectedGroupText}>{item}</Text>
@@ -130,6 +161,15 @@ function ChatsList({navigation}){
                     :
                     null
             }
+
+            <ChatEditorModal
+                chat={chat}
+                visible={isEditorModalVisible}
+                onClose={() => {
+                    setEditorModalVisible(false)
+                    fetchChats().then()
+                }}
+            />
 
             <Modal visible={isModalVisible} animationType="slide">
                 <View style={styles.modalContainer}>

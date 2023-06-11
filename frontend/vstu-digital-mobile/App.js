@@ -38,9 +38,10 @@ export default function App() {
                 <Stack.Screen name="Auth" component={AuthScreen} options={{headerShown: false}}/>
                 <Stack.Screen name="Chats" component={Chats} options={{headerShown: false,
                     title: 'Список чатов',
+                    gestureEnabled: false
 
                 }}/>
-                <Stack.Screen name="Chat" component={Chat} options={{headerShown: false}}/>
+                <Stack.Screen name="Chat" component={Chat} options={{headerShown: false, }}/>
                 <Stack.Screen name="Profile" component={UserProfileScreen} options={{
                     title: 'Профиль',
                     headerStyle: [{

@@ -35,7 +35,7 @@ public class GetChatsQueryHandler : IQueryHandler<GetChatsQuery, List<GetChatsRe
 
         foreach (var chat in chats)
         {
-            var owner = $"{chat.Owner.LastName} {chat.Owner.FirstName.First()}. {chat.Owner.Patronymic.First()}.";
+            var owner = $"{chat.Owner.LastName} {chat.Owner.FirstName.First()}.{chat.Owner.Patronymic.First()}.";
             
             var chatRef = await _dbContext
                 .UserChats

@@ -8,7 +8,7 @@ import {
     REACT_APP_MEASUREMENT_ID} from "@env";
 
 
-const BASE_URL = 'https://343d-92-39-102-137.ngrok-free.app'
+const BASE_URL = 'https://e51e-92-39-102-137.ngrok-free.app'
 
 export const API_URL = `${BASE_URL}/api`;
 export const WS_URL = `${BASE_URL}/hub`;

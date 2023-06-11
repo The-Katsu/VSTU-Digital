@@ -16,6 +16,7 @@ import {decodeToken} from "../services/AuthService";
 import {claims} from "../../config";
 import * as Device from "expo-device";
 import {getMessages} from "../services/MessageService";
+import {getChat} from "../services/ChatsService";
 
 
 const ChatScreen = ({ route }) => {
@@ -26,6 +27,7 @@ const ChatScreen = ({ route }) => {
     const [chatId, setChatId] = useState(0);
     const [userId, setUserId] = useState(0);
     const [sendable, setSendable] = useState(false)
+    const [chat, setChat] = useState({})
     const scrollViewRef = useRef();
     const behavior = Device.deviceName === 'iPhone' ? 'padding' : 'height';
 
@@ -34,14 +36,12 @@ const ChatScreen = ({ route }) => {
         const initializeConnection = async () => {
             const tokenInfo = await decodeToken();
             setUserId(Number.parseInt(tokenInfo[claims.id]));
-            console.log(`token id is ${userId}`)
             const service = new ChatService();
             await service.initializeConnection();
             const id  = route.params.chatId;
             setChatId(id);
-            const m = await getMessages(id);
-            console.log(m)
-            setMessages(m);
+            setChat(await getChat(id))
+            setMessages(await getMessages(id));
             await service.startConnection(id);
             setChatService(service);
         };
@@ -87,7 +87,7 @@ const ChatScreen = ({ route }) => {
         <SafeAreaView style={{ flex: 1, backgroundColor: appTheme.COLORS.white }}>
             <View style={styles.header}>
                 <Text style={styles.headerText}>
-                    {"Тест СУБД"}
+                    {chat.name}
                 </Text>
             </View>
             <ScrollView

@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using VSTU.Digital.Messenger.Application.Chats.Commands.CreateChat;
+using VSTU.Digital.Messenger.Application.Chats.Commands.DeleteChat;
+using VSTU.Digital.Messenger.Application.Chats.Commands.EditChat;
+using VSTU.Digital.Messenger.Application.Chats.Queries.GetChatQuery;
 using VSTU.Digital.Messenger.Application.Chats.Queries.GetChatsQuery;
 using VSTU.Digital.Messenger.Application.Users.Commands.DisconnectUser;
 using VSTU.Digital.Messenger.Presentation.Controllers.Base;
@@ -47,6 +50,32 @@ public sealed class ChatController : ApiController
     {
         var result = await Sender.Send(command);
         return result.Success ? Ok() : BadRequest();
+    }
+
+    [HttpGet]
+    [Route("get/{id:int}")]
+    public async Task<IActionResult> GetChat(int id)
+    {
+        var query = new GetChatQuery(id);
+        var result = await Sender.Send(query);
+        return Ok(result.Value);
+    }
+
+    [HttpPut]
+    [Route("edit")]
+    public async Task<IActionResult> EditChat(EditChatCommand command)
+    {
+        var result = await Sender.Send(command);
+        return result.Success ? Ok() : BadRequest();
+    }
+
+    [HttpDelete]
+    [Route("delete/{id:int}")]
+    public async Task<IActionResult> DeleteChat(int id)
+    {
+        var command = new DeleteChatCommand(id, GetUserId());
+        var result = await Sender.Send(command);
+        return result.Success ? Ok() : BadRequest(result.Error);
     }
 
     /// <summary>
