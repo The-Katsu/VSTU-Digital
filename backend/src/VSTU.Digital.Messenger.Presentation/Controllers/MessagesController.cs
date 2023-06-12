@@ -36,6 +36,12 @@ public class MessagesController : ApiController
         return Ok();
     }
 
+    
+    /// <summary>
+    /// Get messages by chat id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet]
     [Route("{id:int}")]
     public async Task<IActionResult> GetMessages(int id)
